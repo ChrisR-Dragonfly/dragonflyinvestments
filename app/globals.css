@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-dark: #1A3770;
+  --color-brand-heading: #1A3770;
+  --color-brand-body: #333333;
+  --color-brand-accent: #C8961A;
+  --color-brand-accent-hover: #B8840F;
+  --color-brand-bronze: #8B6B14;
+  --color-brand-bg: #ffffff;
+  --color-brand-surface: #f7f8fa;
+  --color-brand-border: #dddddd;
+
+  --font-sans: "Aptos", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Aptos", "Segoe UI", system-ui, sans-serif;
+  background: #ffffff;
+  color: #333333;
+  -webkit-font-smoothing: antialiased;
+}
