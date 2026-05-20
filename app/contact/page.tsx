@@ -48,7 +48,108 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="bg-white py-20 px-6">
+      {/* What to Expect */}
+      <section className="bg-white py-20 px-6 border-b border-[#dddddd]">
+        <div className="max-w-7xl mx-auto">
+          {/* Heading */}
+          <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-4">
+            What to Expect
+          </p>
+          <h2 className="text-4xl font-bold text-[#1A3770] mb-3">
+            How a Dragonfly investment works.
+          </h2>
+          <div className="w-10 h-0.5 bg-[#C8961A] mb-12" />
+
+          {/* 4-step grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10 mb-16">
+            {[
+              {
+                num: "01.",
+                title: "Vertically integrated execution",
+                desc: "Acquisitions, underwriting, legal, asset management, and investor relations are all handled in-house. No hand-offs, no diluted accountability.",
+              },
+              {
+                num: "02.",
+                title: "Aligned capital",
+                desc: "The firm's principals invest alongside every opportunity. We win when our investors win — and we structure every deal with that in mind.",
+              },
+              {
+                num: "03.",
+                title: "Disciplined underwriting",
+                desc: "Conservative assumptions, sensitivity analysis across multiple cycle scenarios, and in-house legal review of every transaction before capital moves.",
+              },
+              {
+                num: "04.",
+                title: "Transparent reporting",
+                desc: "Investors receive asset-level statements, distribution history, tax documents, and performance reporting through the dedicated Agora investor portal.",
+              },
+            ].map(({ num, title, desc }) => (
+              <div key={num}>
+                <p className="text-[#C8961A] text-xl font-bold mb-2">{num}</p>
+                <h3 className="text-[#1A3770] text-xl font-bold mb-3">{title}</h3>
+                <p className="text-[#333333]/70 leading-relaxed text-sm">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* 3-col info bar */}
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#dddddd] border border-[#dddddd] rounded">
+            <div className="p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#333333]/50 mb-3">
+                Minimum Commitment
+              </p>
+              <p className="text-2xl font-bold text-[#1A3770] mb-2">Varies</p>
+              <p className="text-sm text-[#333333]/60 leading-relaxed">
+                By opportunity and structure. Discussed on introduction.
+              </p>
+            </div>
+            <div className="p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#333333]/50 mb-3">
+                Deal Structures
+              </p>
+              <p className="text-lg font-bold text-[#1A3770] mb-2 leading-snug">
+                Common equity · Preferred equity · Mezzanine
+              </p>
+              <p className="text-sm text-[#333333]/60 leading-relaxed">
+                Selected per transaction, return profile, and investor fit.
+              </p>
+            </div>
+            <div className="p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#333333]/50 mb-3">
+                Reporting Cadence
+              </p>
+              <p className="text-2xl font-bold text-[#1A3770] mb-2">Quarterly</p>
+              <p className="text-sm text-[#333333]/60 leading-relaxed">
+                Plus real-time access through the Agora portal.
+              </p>
+            </div>
+          </div>
+
+          {/* Investor overview CTA */}
+          <div className="mt-8 bg-[#f7f8fa] border border-[#dddddd] rounded p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-2">
+                Investor Overview
+              </p>
+              <h3 className="text-[#1A3770] text-xl font-bold mb-1">
+                Download the Dragonfly investor overview (PDF).
+              </h3>
+              <p className="text-sm text-[#333333]/60">
+                A one-page firm overview with portfolio stats, strategy, and team. Email required for delivery.
+              </p>
+            </div>
+            <button
+              onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
+              className="shrink-0 px-6 py-3 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-wider rounded hover:bg-[#B8840F] transition-colors whitespace-nowrap"
+            >
+              Request the Overview →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact form */}
+      <section id="contact-form" className="bg-white py-20 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16">
           {/* Form */}
           <div className="lg:col-span-2">

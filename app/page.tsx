@@ -13,11 +13,12 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import HeroSlideshow from "@/components/HeroSlideshow";
 
 const stats = [
-  { value: "50+", label: "Years of Experience" },
-  { value: "$500M+", label: "Distressed Debt Acquired" },
-  { value: "1980s", label: "Downtown Miami Presence" },
+  { value: "50+", label: "YEARS OF EXPERIENCE" },
+  { value: "$750M+", label: "ACQUIRED & DEVELOPED" },
+  { value: "300+", label: "PROJECTS" },
   { value: "Full-Service", label: "Acquisition to Management" },
 ];
 
@@ -26,41 +27,49 @@ const focusAreas = [
     icon: Store,
     title: "Retail Centers",
     desc: "Grocery-anchored and discount-focused retail centers across key markets.",
+    href: "/portfolio?filter=Retail",
   },
   {
     icon: Building2,
-    title: "Office",
-    desc: "Strategic office space acquisitions with strong value-add potential.",
+    title: "Multifamily",
+    desc: "Residential apartment and mixed-income housing investments across key markets.",
+    href: "/portfolio?filter=Multifamily",
   },
   {
     icon: Warehouse,
     title: "Industrial & Warehouse",
     desc: "Institutional-quality warehouse and industrial properties.",
+    href: "/portfolio?filter=Industrial",
   },
   {
     icon: TreePine,
-    title: "Storage Facilities",
-    desc: "Self-storage and specialty storage investments nationwide.",
+    title: "Mixed-Use",
+    desc: "Dynamic mixed-use developments combining residential, retail, and commercial uses.",
+    href: "/portfolio?filter=Mixed-Use",
   },
   {
     icon: Hotel,
     title: "Hospitality",
     desc: "Hospitality establishments and experiential real estate assets.",
+    href: "/portfolio?filter=Hospitality",
   },
   {
     icon: Landmark,
     title: "Historic Buildings",
     desc: "Adaptive reuse and preservation of historically significant properties.",
+    href: "/portfolio?filter=Adaptive Reuse",
   },
   {
     icon: FileText,
     title: "Notes & Mortgages",
     desc: "Active pursuit of note and mortgage investment opportunities.",
+    href: "/portfolio",
   },
   {
     icon: Cpu,
     title: "Prop-Tech",
     desc: "Investments in technology companies reshaping real estate.",
+    href: "/portfolio",
   },
 ];
 
@@ -85,47 +94,7 @@ const differentiators = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative min-h-[88vh] bg-white flex items-center overflow-hidden border-b border-[#dddddd]">
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#C8961A]" />
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#1A3770 1px, transparent 1px), linear-gradient(90deg, #1A3770 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
-          <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-6">
-            Miami, Florida · Est. 1970s
-          </p>
-          <h1 className="text-5xl md:text-7xl font-bold text-[#1A3770] leading-tight max-w-3xl mb-8">
-            50 Years of Real Estate{" "}
-            <span className="text-[#C8961A]">Excellence</span>
-          </h1>
-          <p className="text-[#333333] text-lg md:text-xl max-w-2xl leading-relaxed mb-12">
-            A private, well-capitalized real estate investment group with expertise in
-            acquisition, development, adaptive reuse, leasing, and management across
-            every major property type.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/portfolio"
-              className="px-8 py-4 bg-[#1A3770] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#162d5e] transition-colors"
-            >
-              View Portfolio
-            </Link>
-            <Link
-              href="/contact"
-              className="px-8 py-4 border-2 border-[#C8961A] text-[#1A3770] font-bold text-sm uppercase tracking-widest rounded hover:bg-[#C8961A] hover:text-white transition-colors"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroSlideshow />
 
       {/* Stats bar */}
       <section className="bg-[#f7f8fa] border-b border-[#dddddd]">
@@ -154,21 +123,22 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {focusAreas.map((area) => (
-              <div
+              <Link
                 key={area.title}
-                className="border border-[#dddddd] rounded p-6 hover:border-[#C8961A] hover:shadow-sm transition-all group"
+                href={area.href}
+                className="border border-[#dddddd] rounded p-6 hover:border-[#C8961A] hover:bg-[#1A3770] hover:shadow-sm transition-all group"
               >
                 <area.icon
                   size={26}
                   className="text-[#C8961A] mb-4 group-hover:scale-110 transition-transform"
                 />
-                <h3 className="font-bold text-[#1A3770] text-base mb-2">
+                <h3 className="font-bold text-[#1A3770] group-hover:text-white text-base mb-2 transition-colors">
                   {area.title}
                 </h3>
-                <p className="text-sm text-[#333333]/70 leading-relaxed">
+                <p className="text-sm text-[#333333]/70 group-hover:text-white/70 leading-relaxed transition-colors">
                   {area.desc}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -231,7 +201,7 @@ export default function HomePage() {
             on acquisitions. Reach out to start a conversation.
           </p>
           <Link
-            href="/contact"
+            href="/contact#contact-form"
             className="inline-block px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors"
           >
             Get in Touch

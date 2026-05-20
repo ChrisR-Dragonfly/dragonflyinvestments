@@ -1,4 +1,5 @@
 import { CheckCircle } from "lucide-react";
+import FootprintMap from "@/components/FootprintMap";
 
 const accomplishments = [
   "Major stockholder of a local community bank for over 20 years",
@@ -97,23 +98,23 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-5 text-[#333333] leading-relaxed">
               <p>
-                Dragonfly Investments is a private, well-capitalized real estate investment
-                group based in Miami, Florida. Boasting over 50 years of experience, we
-                have expertise in all facets of real estate property ownership, including
-                acquisition, development, adaptive reuse, leasing, and management of
-                various property types.
+                Dragonfly is a private real estate investment and development firm founded
+                in Miami in 2013 by Jason Morjain and Irving Weisselberger. We invest our
+                own capital alongside a trusted network of long-standing investors and
+                partners, allowing us to move with conviction, flexibility, and speed.
               </p>
               <p>
-                Our diverse portfolio includes retail centers — primarily focused on grocery
-                anchors and discounters — office spaces, storage facilities,
-                institutional-quality warehouse and industrial properties, historic
-                buildings, hospitality establishments, and vacant land under development.
+                Without outside mandates or layers of bureaucracy, we focus on opportunities
+                where experience, creativity, and execution create an edge. From distressed
+                debt and adaptive reuse to workforce housing, industrial development,
+                grocery-anchored retail, and opportunistic acquisitions, we pursue projects
+                that others often overlook or overcomplicate.
               </p>
               <p>
-                In addition to growing our current real estate portfolio, we actively pursue
-                acquisition opportunities involving notes, mortgages, and investments in the
-                prop-tech space. Dragonfly&apos;s ability to underwrite sophisticated and
-                complex transactions enables us to move swiftly in acquiring them.
+                We built Dragonfly around complex real estate strategies and hands-on
+                execution. Every investment is driven by a clear thesis, disciplined
+                underwriting, and a long-term approach to value creation — with our own
+                capital invested alongside our partners at every step.
               </p>
             </div>
           </div>
@@ -133,9 +134,8 @@ export default function AboutPage() {
 
             <div className="border-l-4 border-[#C8961A] bg-[#f7f8fa] rounded-r p-6 mt-4">
               <p className="text-[#333333] text-sm leading-relaxed italic">
-                &ldquo;Dragonfly&apos;s unique industry position stems from our wealth of knowledge
-                and experience, as well as our unwavering attention to detail in each
-                transaction.&rdquo;
+                &ldquo;Sophisticated real estate investing should never lose its personal touch,
+                 which is why we stay directly involved in every deal and every relationship.&rdquo;
               </p>
             </div>
           </div>
@@ -165,6 +165,44 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Footprint */}
+      <section className="bg-white py-20 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left: text + state list */}
+          <div>
+            <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
+              Our Footprint
+            </p>
+            <h2 className="text-3xl font-bold text-[#1A3770] mb-6">
+              12 states. One disciplined approach.
+            </h2>
+            <p className="text-[#333333]/70 leading-relaxed mb-8">
+              Dragonfly&apos;s portfolio operates across the East Coast, Southeast, and
+              selective Midwest markets. We invest where we can underwrite with local
+              insight — and walk the property ourselves before capital moves.
+            </p>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              {[
+                "Texas", "Alabama",
+                "Indiana", "Ohio",
+                "Kentucky", "West Virginia",
+                "Virginia", "North Carolina",
+                "South Carolina", "Georgia",
+                "Florida", "Pennsylvania",
+              ].map((state) => (
+                <div key={state} className="flex items-center gap-2.5">
+                  <span className="text-[#C8961A] text-lg leading-none">•</span>
+                  <span className="text-[#1A3770] font-semibold text-sm">{state}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: interactive map */}
+          <FootprintMap />
         </div>
       </section>
 
