@@ -372,13 +372,14 @@ const properties: Property[] = [
   },
 ];
 
-const categoryPlaceholderStyle: Record<AssetCategory | "All", string> = {
+const categoryPlaceholderStyle: Record<AssetCategory, string> = {
   All: "bg-[#f0f2f7]",
   Retail: "bg-[#f0f2f7]",
   Industrial: "bg-slate-100",
   Multifamily: "bg-indigo-50",
   Hospitality: "bg-teal-50",
   "Mixed-Use": "bg-purple-50",
+  "Adaptive Reuse": "bg-amber-50",
 };
 
 const statusBadge: Record<Property["status"], string> = {
