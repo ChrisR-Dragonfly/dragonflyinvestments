@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Building2 } from "lucide-react";
@@ -395,7 +395,7 @@ const stats = [
   { value: "Full-Service", label: "Acquisition to Management" },
 ];
 
-export default function PortfolioPage() {
+function PortfolioContent() {
   const searchParams = useSearchParams();
   const [assetFilter, setAssetFilter] = useState<AssetCategory>("All");
   const [statusFilter, setStatusFilter] = useState<StatusType>("Any Status");
@@ -576,5 +576,13 @@ export default function PortfolioPage() {
         </div>
       </section>
     </>
+  );
+}
+
+export default function PortfolioPage() {
+  return (
+    <Suspense fallback={null}>
+      <PortfolioContent />
+    </Suspense>
   );
 }
