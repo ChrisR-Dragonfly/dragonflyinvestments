@@ -12,18 +12,22 @@ const differentiators = [
   {
     title: "Self-Funded Capital",
     desc: "Independence from institutional funds allows Dragonfly to offer creative solutions and act quickly on opportunities others cannot.",
+    hoverDesc: "No outside LPs, no capital calls, no waiting on someone else's timeline — we close on our own terms.",
   },
   {
     title: "In-House Legal Counsel",
     desc: "Our expert in-house legal team enables efficient closings on complex and sophisticated transactions.",
+    hoverDesc: "No outside firms on the critical path — contracts get drafted, negotiated, and closed under one roof.",
   },
   {
     title: "Expert Underwriting",
     desc: "Decades of underwriting experience across every asset class, enabling us to move swiftly in acquiring complex deals.",
+    hoverDesc: "We've seen the deal before it lands on our desk — that's how we price risk in days, not weeks.",
   },
   {
     title: "Full-Service Platform",
     desc: "From acquisition and development to leasing and management — we manage the full lifecycle of every asset we own.",
+    hoverDesc: "One team owns the asset from closing to disposition — nothing gets lost in a handoff.",
   },
 ];
 
@@ -143,7 +147,7 @@ export default function AboutPage() {
       </section>
 
       {/* Differentiators */}
-      <section className="bg-[#f7f8fa] border-y border-[#dddddd] py-20 px-6">
+      <section id="what-sets-us-apart" className="bg-[#f7f8fa] border-y border-[#dddddd] py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
@@ -157,11 +161,18 @@ export default function AboutPage() {
             {differentiators.map((d) => (
               <div
                 key={d.title}
-                className="bg-white border border-[#dddddd] rounded p-7 hover:border-[#C8961A] transition-colors"
+                className="group bg-white border border-[#dddddd] rounded p-7 transition-colors hover:bg-[#1A3770] hover:border-[#1A3770]"
               >
-                <div className="w-8 h-0.5 bg-[#C8961A] mb-4" />
-                <h3 className="font-bold text-[#1A3770] text-lg mb-2">{d.title}</h3>
-                <p className="text-[#333333]/70 text-sm leading-relaxed">{d.desc}</p>
+                <div className="w-8 h-0.5 bg-[#C8961A] mb-4 transition-colors group-hover:bg-white" />
+                <h3 className="font-bold text-lg mb-2 text-[#1A3770] transition-colors group-hover:text-white">
+                  {d.title}
+                </h3>
+                <p className="text-[#333333]/70 text-sm leading-relaxed group-hover:hidden">
+                  {d.desc}
+                </p>
+                <p className="hidden text-[#C8961A] text-sm leading-relaxed group-hover:block">
+                  {d.hoverDesc}
+                </p>
               </div>
             ))}
           </div>

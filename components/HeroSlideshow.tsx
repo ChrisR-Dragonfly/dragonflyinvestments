@@ -68,8 +68,8 @@ export default function HeroSlideshow() {
           Miami, Florida · Est. 2013
         </p>
         <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight max-w-3xl mb-8">
-          50 Years of Real Estate{" "}
-          <span className="text-[#C8961A]">Excellence</span>
+          Over 50 Years of Combined Real Estate{" "}
+          <span className="text-[#C8961A]">Experience</span>
         </h1>
         <p className="text-white/80 text-lg md:text-xl max-w-2xl leading-relaxed mb-12">
           A private, well-capitalized real estate investment group with expertise in

@@ -56,7 +56,7 @@ export default function ContactPage() {
             What to Expect
           </p>
           <h2 className="text-4xl font-bold text-[#1A3770] mb-3">
-            How a Dragonfly investment works.
+            How Dragonfly Investments works.
           </h2>
           <div className="w-10 h-0.5 bg-[#C8961A] mb-12" />
 
@@ -76,12 +76,12 @@ export default function ContactPage() {
               {
                 num: "03.",
                 title: "Disciplined underwriting",
-                desc: "Conservative assumptions, sensitivity analysis across multiple cycle scenarios, and in-house legal review of every transaction before capital moves.",
+                desc: "Conservative assumptions, sensitivity analysis across multiple cycle scenarios, and full legal review of every transaction before capital moves.",
               },
               {
                 num: "04.",
                 title: "Transparent reporting",
-                desc: "Investors receive asset-level statements, distribution history, tax documents, and performance reporting through the dedicated Agora investor portal.",
+                desc: "Investors receive asset-level statements, distribution history, tax documents, and performance reporting through the dedicated investor portal.",
               },
             ].map(({ num, title, desc }) => (
               <div key={num}>

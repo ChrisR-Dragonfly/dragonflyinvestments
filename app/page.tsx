@@ -169,22 +169,46 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4">
-            {differentiators.map((d) => (
-              <div
-                key={d.title}
-                className="flex gap-4 p-5 bg-white border border-[#dddddd] rounded hover:border-[#C8961A] transition-colors"
-              >
-                <div className="shrink-0 w-10 h-10 rounded border border-[#1A3770]/20 bg-white flex items-center justify-center">
-                  <d.icon size={18} className="text-[#1A3770]" />
+            {differentiators.map((d) => {
+              const content = (
+                <>
+                  <div className="shrink-0 w-10 h-10 rounded border border-[#1A3770]/20 bg-white flex items-center justify-center">
+                    <d.icon size={18} className="text-[#1A3770]" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#1A3770] mb-1">{d.title}</p>
+                    <p className="text-sm text-[#333333]/70 leading-relaxed">
+                      {d.desc}
+                    </p>
+                  </div>
+                </>
+              );
+
+              if (
+                d.title === "Self-Funded" ||
+                d.title === "In-House Legal" ||
+                d.title === "Expert Underwriting"
+              ) {
+                return (
+                  <Link
+                    key={d.title}
+                    href="/about#what-sets-us-apart"
+                    className="flex gap-4 p-5 bg-white border border-[#dddddd] rounded hover:border-[#C8961A] transition-colors"
+                  >
+                    {content}
+                  </Link>
+                );
+              }
+
+              return (
+                <div
+                  key={d.title}
+                  className="flex gap-4 p-5 bg-white border border-[#dddddd] rounded hover:border-[#C8961A] transition-colors"
+                >
+                  {content}
                 </div>
-                <div>
-                  <p className="font-bold text-[#1A3770] mb-1">{d.title}</p>
-                  <p className="text-sm text-[#333333]/70 leading-relaxed">
-                    {d.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
