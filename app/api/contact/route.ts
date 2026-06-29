@@ -28,6 +28,13 @@ const FIELD_LABELS: Record<string, string> = {
 };
 
 export async function POST(request: Request) {
+  if (!process.env.RESEND_API_KEY || !process.env.CONTACT_EMAIL_TO) {
+    console.error(
+      "Contact form misconfigured: missing RESEND_API_KEY or CONTACT_EMAIL_TO environment variable."
+    );
+    return NextResponse.json({ ok: false }, { status: 500 });
+  }
+
   try {
     const formData = await request.formData();
     const tab = String(formData.get("tab") ?? "general");
