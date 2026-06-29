@@ -3,34 +3,161 @@
 import { useState } from "react";
 import { Mail, MapPin, CheckCircle } from "lucide-react";
 
-const interests = [
-  "Acquisition Opportunity",
-  "Investor Inquiry",
-  "Partnership",
-  "General Inquiry",
+const propertyOptions = [
+  "Anna NEC — Rosamond Town Center — Anna, TX",
+  "CVS Portfolio Mezzanine — FL · IN · OH",
+  "Dragonfly Commerce Park — Port St. Lucie, FL",
+  "7500 Biscayne — Miami, FL",
+  "Mundy Street / Historic Restoration — Miami, FL",
+  "The Emancipator — Miami, FL",
+  "Dragonfly Shops at Old Cutler — Cutler Bay, FL",
+  "The Plaza at Chapel Hill — Cuyahoga Falls, OH",
+  "Regency Plaza — Jacksonville, FL",
+  "Newmarket South — Hampton, VA",
+  "Myrtle Grove Shopping Center — Wilmington, NC",
+  "Otter Creek Shopping Center — Elgin, IL",
+  "Cressona Mall — Pottsville, PA",
+  "Boardman Plaza — Boardman, OH",
+  "Armuchee Village — Rome, GA",
+  "Bridgeport Plaza — Bridgeport, OH",
+  "East Side Plaza — Gadsden, AL",
+  "Fountain Park Shopping Center — Columbus, GA",
+  "Huntingdon Plaza — Huntingdon, PA",
+  "Pulaski Plaza — Pulaski, VA",
+  "Hupps Mill Plaza — South Boston, VA",
+  "Lanier Plaza — Brunswick, GA",
+  "Martinsburg Shopping Center — Martinsburg, WV",
+  "Selina Miami Gold Dust — Miami, FL",
+  "Casa Florida — Miami, FL",
+  "Icebox Development — Hallandale Beach, FL",
+  "River Exchange — Lawrenceville, GA",
+  "Habersham Crossing — Cornelia, GA",
+  "Park Plaza — Hopkinsville, KY",
+  "Tiffany Square — Rocky Mount, NC",
+  "West Towne Square — Rome, GA",
+  "Beach Crossing — Myrtle Beach, SC",
+  "Lancer Shopping Center — Lancaster, SC",
+  "Statesboro Square — Statesboro, GA",
 ];
 
+const tabs = [
+  {
+    key: "investors",
+    label: "Investors",
+    note: "Connect with our investor relations team. We respond within one business day.",
+    submitLabel: "Send Message",
+  },
+  {
+    key: "sellers-brokers",
+    label: "Sellers & Brokers",
+    note: "We respond to every qualified submission within 2 business days.",
+    submitLabel: "Submit Deal",
+  },
+  {
+    key: "leasing",
+    label: "Leasing",
+    note: "Our leasing team will be in touch within 2 business days.",
+    submitLabel: "Submit Leasing Inquiry",
+  },
+  {
+    key: "general",
+    label: "General",
+    note: null,
+    submitLabel: "Send Message",
+  },
+];
+
+const propertyTypes = [
+  "Retail",
+  "Multifamily",
+  "Industrial",
+  "Hospitality",
+  "Mixed-Use",
+  "NNN / Single-Tenant",
+  "Real Estate Debt",
+  "Other",
+];
+
+const useTypes = ["Retail", "Office", "Industrial / Warehouse", "Mixed-Use", "Restaurant", "Other"];
+
+const moveInOptions = ["Immediate", "30–60 days", "60–90 days", "90+ days", "Flexible"];
+
+const initialForm = {
+  name: "",
+  email: "",
+  phone: "",
+  message: "",
+  accredited: false,
+  company: "",
+  propertyType: "",
+  location: "",
+  dealSize: "",
+  tenantRole: "",
+  propertyInterest: "",
+  sfNeeded: "",
+  useType: "",
+  moveIn: "",
+};
+
 export default function ContactPage() {
+  const [activeTab, setActiveTab] = useState(tabs[0].key);
   const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    interest: "",
-    message: "",
-  });
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
+  const [form, setForm] = useState(initialForm);
+  const [file, setFile] = useState<File | null>(null);
+
+  const currentTab = tabs.find((t) => t.key === activeTab)!;
 
   function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      setForm((prev) => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleTabChange(key: string) {
+    setActiveTab(key);
+    setForm(initialForm);
+    setFile(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setError(false);
+
+    const data = new FormData();
+    data.append("tab", activeTab);
+    Object.entries(form).forEach(([key, value]) => {
+      if (typeof value === "boolean") {
+        if (value) data.append(key, "Yes");
+      } else if (value) {
+        data.append(key, value);
+      }
+    });
+    if (file) data.append("file", file);
+
+    try {
+      const res = await fetch("/api/contact", { method: "POST", body: data });
+      if (!res.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function resetForm() {
+    setSubmitted(false);
+    setError(false);
+    setForm(initialForm);
+    setFile(null);
   }
 
   return (
@@ -164,103 +291,373 @@ export default function ContactPage() {
                   be in touch with you shortly.
                 </p>
                 <button
-                  onClick={() => {
-                    setSubmitted(false);
-                    setForm({ name: "", email: "", phone: "", interest: "", message: "" });
-                  }}
+                  onClick={resetForm}
                   className="mt-8 px-6 py-3 border border-[#dddddd] text-sm text-[#333333] rounded hover:border-[#C8961A] hover:text-[#1A3770] transition-colors"
                 >
                   Send Another Message
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                      Full Name <span className="text-[#C8961A]">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={form.name}
-                      onChange={handleChange}
-                      placeholder="John Smith"
-                      className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                      Email Address <span className="text-[#C8961A]">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="john@example.com"
-                      className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
-                    />
-                  </div>
-                </div>
+              <>
+                <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
+                  Work With Us
+                </p>
+                <h2 className="text-3xl font-bold text-[#1A3770] mb-3">
+                  Get in touch.
+                </h2>
+                <p className="text-[#333333]/70 text-sm leading-relaxed mb-8">
+                  Four audiences, four paths. Choose the one that fits and a member of our
+                  team will respond personally.
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      placeholder="+1 (305) 000-0000"
-                      className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                      Area of Interest <span className="text-[#C8961A]">*</span>
-                    </label>
-                    <select
-                      name="interest"
-                      required
-                      value={form.interest}
-                      onChange={handleChange}
-                      className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white"
+                {/* Tabs */}
+                <div className="flex flex-wrap gap-2 border-b border-[#dddddd] mb-6">
+                  {tabs.map((t) => (
+                    <button
+                      key={t.key}
+                      type="button"
+                      onClick={() => handleTabChange(t.key)}
+                      className={`px-5 py-3 text-sm font-semibold uppercase tracking-wider transition-colors border-b-2 -mb-px ${
+                        activeTab === t.key
+                          ? "border-[#C8961A] text-[#1A3770]"
+                          : "border-transparent text-[#333333]/50 hover:text-[#1A3770]"
+                      }`}
                     >
-                      <option value="">Select one...</option>
-                      {interests.map((i) => (
-                        <option key={i} value={i}>{i}</option>
-                      ))}
-                    </select>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                {currentTab.note && (
+                  <p className="text-[#333333]/60 text-xs mb-8 italic">{currentTab.note}</p>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name + Email/Phone (Investors tab swaps Email and Phone order) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                        Name <span className="text-[#C8961A]">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        value={form.name}
+                        onChange={handleChange}
+                        placeholder="John Smith"
+                        className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                      />
+                    </div>
+                    {activeTab === "investors" ? (
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Phone
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={form.phone}
+                          onChange={handleChange}
+                          placeholder="+1 (305) 000-0000"
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Email <span className="text-[#C8961A]">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          required
+                          value={form.email}
+                          onChange={handleChange}
+                          placeholder="john@example.com"
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                    Message <span className="text-[#C8961A]">*</span>
-                  </label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={6}
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="Tell us about your opportunity or inquiry..."
-                    className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors resize-none"
-                  />
-                </div>
+                  {/* Investors: Email */}
+                  {activeTab === "investors" && (
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                        Email <span className="text-[#C8961A]">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="john@example.com"
+                        className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                      />
+                    </div>
+                  )}
 
-                <button
-                  type="submit"
-                  className="px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors"
-                >
-                  Send Message
-                </button>
-              </form>
+                  {/* Sellers & Brokers + Leasing: Company / Phone */}
+                  {(activeTab === "sellers-brokers" || activeTab === "leasing") && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Company
+                        </label>
+                        <input
+                          type="text"
+                          name="company"
+                          value={form.company}
+                          onChange={handleChange}
+                          placeholder="Company name"
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Phone
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={form.phone}
+                          onChange={handleChange}
+                          placeholder="+1 (305) 000-0000"
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sellers & Brokers fields */}
+                  {activeTab === "sellers-brokers" && (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                            Property Type
+                          </label>
+                          <select
+                            name="propertyType"
+                            value={form.propertyType}
+                            onChange={handleChange}
+                            className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white"
+                          >
+                            <option value="">Select one...</option>
+                            {propertyTypes.map((o) => (
+                              <option key={o} value={o}>{o}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                            Location
+                          </label>
+                          <input
+                            type="text"
+                            name="location"
+                            value={form.location}
+                            onChange={handleChange}
+                            placeholder="City, State"
+                            className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Deal Size
+                        </label>
+                        <input
+                          type="text"
+                          name="dealSize"
+                          value={form.dealSize}
+                          onChange={handleChange}
+                          placeholder="e.g. $5,000,000"
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Attach OM, Financials, or Deal Package
+                        </label>
+                        <input
+                          type="file"
+                          accept=".pdf,.xls,.xlsx,.doc,.docx,.zip"
+                          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-[#f7f8fa] file:text-[#1A3770] file:text-xs file:font-semibold file:uppercase file:tracking-wider focus:outline-none focus:border-[#C8961A] transition-colors"
+                        />
+                        <p className="text-xs text-[#333333]/50 mt-2">
+                          Optional · PDF, Excel, Word, ZIP · max 25MB
+                          {file ? ` · Selected: ${file.name}` : ""}
+                        </p>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Leasing fields */}
+                  {activeTab === "leasing" && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-3">
+                          I am…
+                        </label>
+                        <div className="flex flex-wrap gap-6">
+                          {[
+                            { value: "representing-tenant", label: "Representing a tenant" },
+                            { value: "tenant-principal", label: "The tenant / principal" },
+                          ].map((opt) => (
+                            <label key={opt.value} className="flex items-center gap-2 text-sm text-[#333333] cursor-pointer">
+                              <input
+                                type="radio"
+                                name="tenantRole"
+                                value={opt.value}
+                                checked={form.tenantRole === opt.value}
+                                onChange={handleChange}
+                                className="accent-[#C8961A]"
+                              />
+                              {opt.label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Property of Interest
+                        </label>
+                        <select
+                          name="propertyInterest"
+                          value={form.propertyInterest}
+                          onChange={handleChange}
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white"
+                        >
+                          <option value="">Select one...</option>
+                          {propertyOptions.map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                            Approximate SF Needed
+                          </label>
+                          <input
+                            type="text"
+                            name="sfNeeded"
+                            value={form.sfNeeded}
+                            onChange={handleChange}
+                            placeholder="e.g. 2,500 sq ft"
+                            className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                            Use Type
+                          </label>
+                          <select
+                            name="useType"
+                            value={form.useType}
+                            onChange={handleChange}
+                            className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white"
+                          >
+                            <option value="">Select one...</option>
+                            {useTypes.map((o) => (
+                              <option key={o} value={o}>{o}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                          Desired Move-In
+                        </label>
+                        <select
+                          name="moveIn"
+                          value={form.moveIn}
+                          onChange={handleChange}
+                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white"
+                        >
+                          <option value="">Select one...</option>
+                          {moveInOptions.map((o) => (
+                            <option key={o} value={o}>{o}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Message / Brief Description (label + requirement varies by tab) */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
+                      {activeTab === "sellers-brokers" ? "Brief Description" : "Message"}{" "}
+                      {(activeTab === "sellers-brokers" || activeTab === "general") && (
+                        <span className="text-[#C8961A]">*</span>
+                      )}
+                    </label>
+                    <textarea
+                      name="message"
+                      required={activeTab === "sellers-brokers" || activeTab === "general"}
+                      rows={6}
+                      value={form.message}
+                      onChange={handleChange}
+                      placeholder={
+                        activeTab === "sellers-brokers"
+                          ? "Describe the property, asking price, and any relevant deal details..."
+                          : activeTab === "leasing"
+                          ? "Tell us about your space requirements, timeline, and preferred location..."
+                          : activeTab === "investors"
+                          ? "Tell us about your investment goals and how you'd like to get involved..."
+                          : "Tell us how we can help..."
+                      }
+                      className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors resize-none"
+                    />
+                  </div>
+
+                  {/* Investors: accredited checkbox */}
+                  {activeTab === "investors" && (
+                    <label className="flex items-start gap-3 text-sm text-[#333333] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="accredited"
+                        required
+                        checked={form.accredited}
+                        onChange={handleChange}
+                        className="mt-0.5 accent-[#C8961A]"
+                      />
+                      <span>
+                        I confirm I am an accredited investor as defined by SEC Rule 501 of
+                        Regulation D.
+                      </span>
+                    </label>
+                  )}
+
+                  {error && (
+                    <p className="text-sm text-red-600">
+                      Something went wrong sending your message. Please try again or email us
+                      directly at{" "}
+                      <a href="mailto:info@dragonflyinvestment.com" className="underline">
+                        info@dragonflyinvestment.com
+                      </a>
+                      .
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {sending ? "Sending..." : currentTab.submitLabel}
+                  </button>
+                </form>
+              </>
             )}
           </div>
 
