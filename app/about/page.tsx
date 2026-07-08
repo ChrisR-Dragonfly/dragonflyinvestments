@@ -91,7 +91,7 @@ export default function AboutPage() {
       </section>
 
       {/* Story */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
@@ -147,7 +147,7 @@ export default function AboutPage() {
       </section>
 
       {/* Differentiators */}
-      <section id="what-sets-us-apart" className="bg-[#f7f8fa] border-y border-[#dddddd] py-20 px-6">
+      <section id="what-sets-us-apart" className="bg-[#f7f8fa] border-y border-[#dddddd] py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
@@ -180,7 +180,7 @@ export default function AboutPage() {
       </section>
 
       {/* Footprint */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: text + state list */}
           <div>
@@ -218,7 +218,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">

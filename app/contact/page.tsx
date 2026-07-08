@@ -176,7 +176,7 @@ export default function ContactPage() {
       </section>
 
       {/* What to Expect */}
-      <section className="bg-white py-20 px-6 border-b border-[#dddddd]">
+      <section className="bg-white py-16 px-6 border-b border-[#dddddd]">
         <div className="max-w-7xl mx-auto">
           {/* Heading */}
           <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-4">
@@ -276,7 +276,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact form */}
-      <section id="contact-form" className="bg-white py-20 px-6">
+      <section id="contact-form" className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16">
           {/* Form */}
           <div className="lg:col-span-2">

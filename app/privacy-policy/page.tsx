@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-3xl mx-auto">
           <p className="text-xs text-[#C8961A] font-semibold uppercase tracking-widest mb-8">
             Effective: June 2026

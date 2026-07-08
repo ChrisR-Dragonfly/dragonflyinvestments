@@ -97,7 +97,7 @@ export default function HomePage() {
       <HeroSlideshow />
 
       {/* Stats bar */}
-      <section className="bg-[#f7f8fa] border-b border-[#dddddd]">
+      <section className="bg-[#f7f8fa] border-y border-[#dddddd]">
         <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 divide-x divide-[#dddddd]">
           {stats.map((s) => (
             <div key={s.label} className="text-center px-4">
@@ -111,9 +111,9 @@ export default function HomePage() {
       </section>
 
       {/* Focus Areas */}
-      <section className="bg-white py-24 px-6">
+      <section className="bg-white py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-14">
+          <div className="mb-10">
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
               What We Do
             </p>
@@ -145,7 +145,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Dragonfly */}
-      <section className="bg-[#f7f8fa] border-y border-[#dddddd] py-24 px-6">
+      <section className="bg-[#f7f8fa] border-y border-[#dddddd] py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">
@@ -214,7 +214,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA banner */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <div className="w-12 h-0.5 bg-[#C8961A] mx-auto mb-8" />
           <h2 className="text-3xl md:text-4xl font-bold text-[#1A3770] mb-4">

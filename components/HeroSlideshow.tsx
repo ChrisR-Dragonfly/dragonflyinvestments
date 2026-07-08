@@ -28,8 +28,9 @@ export default function HeroSlideshow() {
   }, []);
 
   return (
-    <section className="relative min-h-[88vh] flex items-center overflow-hidden border-b border-[#dddddd]">
-      {/* Background image — instant swap */}
+    <section className="bg-[#f7f8fa] px-6">
+      <div className="relative h-[calc(100dvh-240px)] min-h-[420px] flex items-center overflow-hidden rounded border border-[#dddddd] shadow-sm max-w-7xl mx-auto">
+        {/* Background image — instant swap */}
       <div className="absolute inset-0 z-0">
         <Image
           src={slides[current]}
@@ -63,11 +64,11 @@ export default function HeroSlideshow() {
       </button>
 
       {/* Content */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 py-24">
+      <div className="relative z-20 px-8 md:px-14 py-16">
         <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-6">
           Miami, Florida · Est. 2013
         </p>
-        <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight max-w-3xl mb-8">
+        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-3xl mb-8">
           Over 50 Years of Combined Real Estate{" "}
           <span className="text-[#C8961A]">Experience</span>
         </h1>
@@ -90,6 +91,7 @@ export default function HeroSlideshow() {
             Contact Us
           </Link>
         </div>
+      </div>
       </div>
     </section>
   );
