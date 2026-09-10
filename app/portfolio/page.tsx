@@ -113,7 +113,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "459,000 SF multi-tenant power center anchored by Giant Eagle, Burlington, Dick's, Floor & Decor, and Lowe's Outlet.",
-    image: "/ChapelHill_Picture2.png",
+    image: "/ChapelHill_Picture2.jpg",
   },
   {
     name: "Regency Plaza",
@@ -123,7 +123,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "206,000 SF shopping center anchored by Burlington, OfficeMax, and dd's Discounts.",
-    image: "/Regency_Picture2.png",
+    image: "/Regency_Picture2.jpg",
   },
   {
     name: "Newmarket South",
@@ -133,7 +133,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "355,000 SF three-building retail community anchored by Food Lion and Haynes Furniture.",
-    image: "/NewMarket_Picture1.png",
+    image: "/NewMarket_Picture1.jpg",
   },
   {
     name: "Myrtle Grove Shopping Center",
@@ -153,7 +153,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Sub-regional power center anchored by Burlington, Hobby Lobby, and Big Lots; adjacent to Target.",
-    image: "/OtterCreek_Picture2.png",
+    image: "/OtterCreek_Picture2.jpg",
   },
   {
     name: "Cressona Mall",
@@ -163,7 +163,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "283,000 SF regional center anchored by Giant Food, Staples, Planet Fitness, and Ollie's.",
-    image: "/Cressona_Picture2.png",
+    image: "/Cressona_Picture2.jpg",
   },
   {
     name: "Boardman Plaza",
@@ -173,7 +173,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Large-format retail center at Boardman-Canfield Road with Michael's, Save A Lot, and Dollar Tree.",
-    image: "/Boardman_Picture2.png",
+    image: "/Boardman_Picture2.jpg",
   },
   {
     name: "Armuchee Village",
@@ -183,7 +183,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Grocery-anchored center with 30-year Food Lion and CVS tenancies.",
-    image: "/Armuchee_Picture2.png",
+    image: "/Armuchee_Picture2.jpg",
   },
   {
     name: "Bridgeport Plaza",
@@ -193,7 +193,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "170,000 SF Riesbeck's-anchored center with Dollar General and Big Lots.",
-    image: "/Bridgeport_Picture2.png",
+    image: "/Bridgeport_Picture2.jpg",
   },
   {
     name: "East Side Plaza",
@@ -213,7 +213,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "107,000 SF multi-tenant retail center on Macon Road.",
-    image: "/FountainPark_Picture2.png",
+    image: "/FountainPark_Picture2.jpg",
   },
   {
     name: "Huntingdon Plaza",
@@ -223,7 +223,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Aldi-anchored multi-tenant retail center.",
-    image: "/Huntingdon_Picture2.png",
+    image: "/Huntingdon_Picture2.jpg",
   },
   {
     name: "Pulaski Plaza",
@@ -233,7 +233,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "112,000 SF Food Lion-anchored shopping center in the Blue Ridge region.",
-    image: "/Pulaski_Picture2.png",
+    image: "/Pulaski_Picture2.jpg",
   },
   {
     name: "Hupps Mill Plaza",
@@ -243,7 +243,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Belk-anchored center with Dollar Tree, Advance Auto, and Family Dollar.",
-    image: "/Hupps_Picture2.png",
+    image: "/Hupps_Picture2.jpg",
   },
   {
     name: "Lanier Plaza",
@@ -263,7 +263,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Active",
     description: "Big Lots and Goodwill anchored neighborhood retail center.",
-    image: "/Martinsburg_Picture2.png",
+    image: "/Martinsburg_Picture2.jpg",
   },
   {
     name: "Selina Miami Gold Dust",
@@ -301,7 +301,7 @@ const properties: Property[] = [
     assetCategory: "Retail",
     status: "Realized",
     description: "Kroger-anchored 273,000 SF center. Acquired 2021 at $19.3M, realized 2026 at $23.4M.",
-    image: "/RiverExchange_Picture2.png",
+    image: "/RiverExchange_Picture2.jpg",
   },
   {
     name: "Habersham Crossing",
@@ -389,7 +389,7 @@ const statusBadge: Record<Property["status"], string> = {
 };
 
 const stats = [
-  { value: "50M+", label: "YEARS OF EXPERIENCE" },
+  { value: "50+", label: "YEARS OF EXPERIENCE" },
   { value: "$750M+", label: "ACQUIRED & DEVELOPED" },
   { value: "300+", label: "Projects" },
   { value: "Full-Service", label: "Acquisition to Management" },

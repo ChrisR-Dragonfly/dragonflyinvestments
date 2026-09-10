@@ -1,0 +1,35 @@
+/* Tailwind entry for the WordPress theme.
+   source(none) turns off automatic file scanning so only the @source globs below are read. */
+@import "tailwindcss" source(none);
+@source "../dragonfly/**/*.php";
+@source "../dragonfly/assets/js/**/*.js";
+
+/* Everything below is copied verbatim from app/globals.css (lines 3-30) so both sites share one design. */
+@theme inline {
+  --color-brand-dark: #1A3770;
+  --color-brand-heading: #1A3770;
+  --color-brand-body: #333333;
+  --color-brand-accent: #C8961A;
+  --color-brand-accent-hover: #B8840F;
+  --color-brand-bronze: #8B6B14;
+  --color-brand-bg: #ffffff;
+  --color-brand-surface: #f7f8fa;
+  --color-brand-border: #dddddd;
+
+  --font-sans: "Aptos", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Aptos", "Segoe UI", system-ui, sans-serif;
+  background: #ffffff;
+  color: #333333;
+  -webkit-font-smoothing: antialiased;
+}

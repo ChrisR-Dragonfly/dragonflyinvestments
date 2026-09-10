@@ -1,0 +1,11 @@
+/*
+Theme Name: Dragonfly Investments
+Theme URI: https://www.dragonflyri.com
+Author: Dragonfly Investments
+Description: Custom theme for dragonflyri.com. All page content lives in the theme templates, not in the page editor.
+Version: 1.0.0
+Requires at least: 6.3
+Requires PHP: 7.4
+Text Domain: dragonfly
+*/
+/* Styles are in assets/css/main.css (built with Tailwind from wp-theme/src/tailwind.css). */
