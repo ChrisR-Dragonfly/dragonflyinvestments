@@ -10,13 +10,13 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 ?>
 <div class="flex flex-wrap gap-2 border-b border-[#dddddd] mb-6" role="tablist">
 	<?php foreach ( $dfi_tabs as $i => $t ) : ?>
-		<button type="button" role="tab" data-dfi-tab="<?php echo esc_attr( $t['key'] ); ?>" data-dfi-note="<?php echo esc_attr( $t['note'] ); ?>" data-dfi-submit-label="<?php echo esc_attr( $t['submitLabel'] ); ?>" aria-selected="<?php echo 0 === $i ? 'true' : 'false'; ?>" class="px-5 py-3 text-sm font-semibold uppercase tracking-wider transition-colors border-b-2 -mb-px <?php echo 0 === $i ? 'border-[#C8961A] text-[#1A3770]' : 'border-transparent text-[#333333]/50 hover:text-[#1A3770]'; ?>"><?php echo esc_html( $t['label'] ); ?></button>
+		<button type="button" role="tab" data-dfi-tab="<?php echo esc_attr( $t['key'] ); ?>" data-dfi-tab-note="<?php echo esc_attr( $t['note'] ); ?>" data-dfi-tab-submit="<?php echo esc_attr( $t['submitLabel'] ); ?>" aria-selected="<?php echo 0 === $i ? 'true' : 'false'; ?>" class="px-5 py-3 text-sm font-semibold uppercase tracking-wider transition-colors border-b-2 -mb-px <?php echo 0 === $i ? 'border-[#C8961A] text-[#1A3770]' : 'border-transparent text-[#333333]/50 hover:text-[#1A3770]'; ?>"><?php echo esc_html( $t['label'] ); ?></button>
 	<?php endforeach; ?>
 </div>
 
 <p class="text-[#333333]/60 text-xs mb-8 italic" data-dfi-note><?php echo esc_html( $dfi_tabs[0]['note'] ); ?></p>
 
-<form class="space-y-6" data-dfi-contact-form novalidate="false" enctype="multipart/form-data">
+<form class="space-y-6" data-dfi-contact-form enctype="multipart/form-data">
 	<input type="hidden" name="tab" value="investors" data-dfi-tab-input>
 	<div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
 		<label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>

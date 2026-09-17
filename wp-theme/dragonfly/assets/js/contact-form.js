@@ -5,7 +5,7 @@
 
 	var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-dfi-tab]'));
 	var groups = Array.prototype.slice.call(form.querySelectorAll('[data-dfi-group]'));
-	var note = document.querySelector('[data-dfi-note]');
+	var note = document.querySelector('p[data-dfi-note]'); /* the paragraph, never a tab button */
 	var tabInput = form.querySelector('[data-dfi-tab-input]');
 	var message = form.querySelector('[data-dfi-message]');
 	var messageLabel = form.querySelector('[data-dfi-message-label]');
@@ -37,10 +37,10 @@
 			TAB_OFF.forEach(function (c) { t.classList.toggle(c, !on); });
 			t.setAttribute('aria-selected', on ? 'true' : 'false');
 			if (on) {
-				var n = t.getAttribute('data-dfi-note');
+				var n = t.getAttribute('data-dfi-tab-note');
 				note.textContent = n;
 				note.hidden = !n;
-				submitLabel = t.getAttribute('data-dfi-submit-label');
+				submitLabel = t.getAttribute('data-dfi-tab-submit');
 				submit.textContent = submitLabel;
 			}
 		});

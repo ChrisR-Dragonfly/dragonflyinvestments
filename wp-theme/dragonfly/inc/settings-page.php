@@ -14,7 +14,7 @@ add_action( 'admin_menu', function () {
 add_action( 'admin_init', function () {
 	register_setting( 'dfi_settings', 'dfi_resend_api_key', array( 'sanitize_callback' => 'sanitize_text_field', 'default' => '' ) );
 	register_setting( 'dfi_settings', 'dfi_contact_to', array( 'sanitize_callback' => 'sanitize_email', 'default' => 'chris@dragonflyri.com' ) );
-	register_setting( 'dfi_settings', 'dfi_from', array( 'sanitize_callback' => 'sanitize_text_field', 'default' => 'Dragonfly Website <onboarding@resend.dev>' ) );
+	register_setting( 'dfi_settings', 'dfi_from', array( 'sanitize_callback' => 'dfi_sanitize_from', 'default' => 'Dragonfly Website <onboarding@resend.dev>' ) );
 
 	add_settings_section( 'dfi_email', 'Contact form email', function () {
 		echo '<p>Submissions from the contact form are emailed through <a href="https://resend.com" target="_blank" rel="noopener">Resend</a>. Without an API key the theme falls back to the server\'s own mail, which is unreliable.</p>';

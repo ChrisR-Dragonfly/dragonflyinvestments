@@ -75,14 +75,13 @@ function dfi_contact_submit( WP_REST_Request $request ) {
 		return new WP_REST_Response( array( 'ok' => true ), 200 );
 	}
 
-	// 3. Rate limit per IP (REMOTE_ADDR only; client-supplied headers are not trusted).
+	// 3. Rate limit per IP (REMOTE_ADDR only; client-supplied headers are not trusted). Counted in step 7.
 	$ip       = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	$rate_key = 'dfi_rl_' . md5( $ip );
 	$attempts = (int) get_transient( $rate_key );
 	if ( $attempts >= DFI_CONTACT_MAX_ATTEMPTS ) {
 		return dfi_contact_error( 'rate_limited', 'Too many messages. Please try again later.', 429 );
 	}
-	set_transient( $rate_key, $attempts + 1, HOUR_IN_SECONDS );
 
 	// 4. Tab + fields (allowlisted, sanitized).
 	$tabs = dfi_contact_tab_labels();
@@ -159,7 +158,8 @@ function dfi_contact_submit( WP_REST_Request $request ) {
 	$subject   = 'New ' . $tab_label . ' Inquiry — Dragonfly Website';
 	$html      = '<h2 style="color:#1A3770;">New ' . esc_html( $tab_label ) . ' Inquiry</h2><table>' . implode( '', $rows ) . '</table>';
 
-	// 7. Send.
+	// 7. Send. Count it against the rate limit only now, so failed validation never burns an attempt.
+	set_transient( $rate_key, $attempts + 1, HOUR_IN_SECONDS );
 	$sent = dfi_send_email( $subject, $html, $attachments, $email );
 	if ( is_wp_error( $sent ) ) {
 		error_log( 'Dragonfly contact form send failed: ' . $sent->get_error_message() );
@@ -170,12 +170,33 @@ function dfi_contact_submit( WP_REST_Request $request ) {
 }
 
 /**
+ * Sanitize a "Name <email@domain>" from address.
+ * sanitize_text_field() cannot be used on the whole string: it strips anything shaped like an HTML
+ * tag, which removes the <email> part entirely and leaves Resend with an invalid sender.
+ */
+function dfi_sanitize_from( $value ) {
+	$default = 'Dragonfly Website <onboarding@resend.dev>';
+	$value   = trim( (string) $value );
+	if ( preg_match( '/^(.*)<([^<>]+)>$/', $value, $m ) ) {
+		$name  = trim( sanitize_text_field( $m[1] ) );
+		$email = sanitize_email( trim( $m[2] ) );
+	} else {
+		$name  = '';
+		$email = sanitize_email( $value );
+	}
+	if ( ! $email || ! is_email( $email ) ) {
+		return $default;
+	}
+	return '' !== $name ? $name . ' <' . $email . '>' : $email;
+}
+
+/**
  * Send an HTML email to the configured recipient. Returns true or WP_Error.
  * $attachments: array of ['filename' => ..., 'path' => ...].
  */
 function dfi_send_email( $subject, $html, $attachments = array(), $reply_to = '' ) {
 	$to   = sanitize_email( get_option( 'dfi_contact_to', 'chris@dragonflyri.com' ) );
-	$from = sanitize_text_field( get_option( 'dfi_from', 'Dragonfly Website <onboarding@resend.dev>' ) );
+	$from = dfi_sanitize_from( get_option( 'dfi_from', 'Dragonfly Website <onboarding@resend.dev>' ) );
 	$key  = trim( (string) get_option( 'dfi_resend_api_key', '' ) );
 
 	if ( ! $to || ! is_email( $to ) ) {
@@ -189,7 +210,7 @@ function dfi_send_email( $subject, $html, $attachments = array(), $reply_to = ''
 		}
 		$paths = array();
 		foreach ( $attachments as $a ) {
-			$paths[] = $a['path'];
+			$paths[ $a['filename'] ] = $a['path']; // keyed by name, otherwise the file arrives as phpXXXX.tmp
 		}
 		return wp_mail( $to, $subject, $html, $headers, $paths ) ? true : new WP_Error( 'dfi_wp_mail', 'wp_mail() returned false.' );
 	}

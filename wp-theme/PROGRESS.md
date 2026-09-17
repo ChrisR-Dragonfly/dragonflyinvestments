@@ -1,6 +1,6 @@
 # Dragonfly WordPress rebuild — progress and next steps
 
-Last updated: 2026-09-10 (end of session 2). Read this first when picking the work back up.
+Last updated: 2026-09-17 (end of session 3). Read this first when picking the work back up.
 Full plan: `C:\Users\chris\.claude\plans\humble-splashing-newell.md`
 Backup detail: `C:\Users\chris\Documents\dragonflyri-wordpress-backup-2026-09\STATUS.md`
 
@@ -16,42 +16,45 @@ up first.
 
 | Piece | State |
 |---|---|
-| New WordPress theme | Built, committed, pushed. **Never executed** — no PHP has run yet |
+| New WordPress theme | **Running in real WordPress locally and verified** (session 3). Not yet on the live server |
 | Old-site backup | Files + content done and verified. Full DB dump still blocked |
-| Live-site email typo | **Fixed and verified 2026-09-10** |
-| LocalWP | Not installed yet. This is the blocker for everything else |
+| Live-site email typo | Fixed and verified 2026-09-10 |
+| LocalWP site | **Up**: `http://dragonfly-local.local`, PHP 8.0.30, Apache 2.4.43, MariaDB 10.4.32, WordPress 7.1.1. Matches production |
 
-Branch: `wordpress-theme` (commit `9caf9c9`, 101 files). Pushed to GitHub. `master` untouched, so the
-live Vercel site is unaffected.
+Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Vercel site is unaffected.
 
-## Tomorrow, in order
+## Local environment (already set up, do not redo)
 
-### 1. Install LocalWP and run the theme for the first time
+- LocalWP site `dragonfly-local`, site id `VlzTI5aF1`. Start it from the Local app if it is stopped.
+- The theme is linked in by a directory junction, so edits in the repo are live instantly:
+  `C:\Users\chris\Local Sites\dragonfly-local\app\public\wp-content\themes\dragonfly` points at `wp-theme/dragonfly`.
+- Theme active, 7 pages created (`home`, `about`, `portfolio`, `contact`, `legal`, `privacy-policy`,
+  `investor-portal`), static front page = Home, permalinks = Post name, title "Dragonfly Investments".
+- Local's mail catcher (Mailpit) is at `http://localhost:10000`. With no Resend key saved, the theme
+  falls back to `wp_mail()` and every message lands there, so the form can be tested without emailing anyone.
+- WP-CLI works from Git Bash using Local's bundled PHP plus the site's `php.ini` (it carries the MySQL port):
+  `php.exe -c <Roaming>/Local/run/VlzTI5aF1/conf/php/php.ini <Local>/resources/extraResources/bin/wp-cli/wp-cli.phar --path="<site>/app/public" <command>`.
+  Ignore the `php_imagick.dll` warning, it is harmless. `wp rewrite flush --hard` errors (its helper
+  process loses the ini), which does not matter because `.htaccess` already has the rules.
 
-- Install from localwp.com. Create site `dragonfly-local`.
-- **Use PHP 8.0.x, not 8.2.** Production is PHP 8.0.30 (confirmed from the server log). The plan
-  originally said 8.2; that was a guess made before we had the real number. Match production.
-- Link the theme with a directory junction, from `cmd.exe` (no admin rights needed):
-  ```
-  mklink /J "C:\Users\chris\Local Sites\dragonfly-local\app\public\wp-content\themes\dragonfly" "C:\Users\chris\Documents\Claude\dragonflyinvestments\wp-theme\dragonfly"
-  ```
-- **Syntax-check every PHP file before activating**, using LocalWP's bundled PHP: `php -l` on each.
-- Activate, create the 7 pages (slugs `home`, `about`, `portfolio`, `contact`, `legal`,
-  `privacy-policy`, `investor-portal`), Settings > Reading static front page = Home,
-  Settings > Permalinks = Post name.
-- Fix whatever breaks. Expect a handful of issues; nothing has ever been run.
+## Next steps, in order
 
-### 2. Parity QA
+### 1. Two small parity leftovers (cosmetic, not blockers)
 
-Headless Playwright, not yet installed (`pip install playwright && playwright install chromium`).
-For each of 7 routes, load `http://localhost:3000` and the LocalWP URL, screenshot at 1440x900 and
-390x844, diff `innerText` of `<main>`, compare top-level `<section>` boxes within 2px. Compare layout
-boxes, not pixels (Next serves resized WebP; the theme serves originals).
-**Always test logged out** — the admin bar injects `html { margin-top: 32px !important }` and shifts
-the sticky header.
+- **Contact page form section is 857px vs 861px on Next.js (4px).** Already proven NOT to be fonts or
+  content: the same paragraph measures identically on both (Aptos, 12px, 19.5px line height, 3 lines,
+  58.5px). Tab bar is 45px vs 46px. Measurements were taken at device pixel ratio 1.75, so re-measure at
+  DPR 1 first, because sub-pixel snapping may be the whole story.
+- **Portfolio page has no Next.js number yet.** WordPress measures 6110px (sections 410 / 4868 / 409).
+  Next hides that page's content in an off-screen frame until it hydrates, so measure it by navigating
+  the tab straight to `localhost:3000/portfolio`, not through an iframe.
+- Then repeat the comparison at a phone width (390x844). Only desktop has been compared so far.
 
-Then the contact form end to end: real Resend key in Settings > Dragonfly, submit all 4 tabs, PDF on
-the Sellers tab, confirm 4 emails. Then test 25 MB rejection, `.exe` rejection, honeypot.
+### 2. Answer the email-address question (see below), then send one real email through Resend
+
+Everything about the form is proven except an actual Resend delivery. Put a real sending-only key in
+Settings > Dragonfly locally, submit once, and confirm it reaches chris@dragonflyri.com.
+Also eyeball the Settings > Dragonfly page itself, which has not been looked at in a browser yet.
 
 ### 3. Finish the backup (can happen in parallel, needs Chris in wp-admin)
 
@@ -60,7 +63,14 @@ Site Health > Info pasted into `site-health.txt`. Then bundle into one zip with 
 
 ### 4. Go-live
 
-Ordered checklist is in the plan file, "Phase 9".
+Ordered checklist is in the plan file, "Phase 9". Lessons from the local rehearsal that apply directly:
+
+- **Slug collisions are real.** Locally, WordPress's built-in draft "Privacy Policy" page held the
+  `privacy-policy` slug, so the new page silently became `privacy-policy-2` and its template would
+  never have loaded. On the live site, REUSE the existing pages: `contact` 275, `portfolio` 1943,
+  `privacy-policy` 5033. After creating or retitling any page, check the slug field.
+- Before go-live, find the custom login URL set by WPS Hide Login, or a rollback could lock everyone out.
+- Watch Wordfence and Really Simple Security for blocking `/wp-json/dragonfly/v1/contact`.
 
 ## Open question that must be answered before go-live
 
@@ -71,6 +81,73 @@ The live old site uses `info@dragonflyri.com`. Given we just fixed an address th
 for three and a half years, confirm these two are real before shipping them. Files to edit if they
 change: `footer.php`, `page-contact.php`, `page-investor-portal.php`, `page-legal.php`,
 `page-privacy-policy.php`.
+
+## What happened in session 3 (2026-09-17)
+
+Decision confirmed: **staying with WordPress.** Irving asked whether to host on WordPress or a plain server
+and which is easier to maintain. The tradeoff was laid out (hardcoded content means WordPress's editability
+benefit is not realised, so static hosting would be less upkeep), and Chris chose to continue with WordPress.
+
+LocalWP is installed but no site exists yet, so its bundled PHP was used to verify the theme offline:
+
+- **Syntax**: all 23 theme PHP files pass `php -l`. First time any of this PHP was checked.
+- **Rendering**: all 9 templates execute cleanly through a WordPress stub harness (`tests/`).
+- **Text parity vs the live Next.js site**: home and about are word-for-word identical. Portfolio and contact
+  differ only by design (the theme keeps all four contact tabs, the mobile menu and the empty state in the DOM
+  and hides them; Next renders them conditionally).
+- **Layout parity at 1440x900**: home 2628px and about 3417px document heights, with every section height
+  matching the Next.js site exactly. The 506px footprint section confirms the map snapshot renders identically.
+- **JavaScript**: portfolio filters (36 / Industrial 1 "property" singular / Retail+Realized 10 / empty state),
+  `?filter=` deep link and bogus-value fallback, all four contact tabs (fields, required flags, "Brief
+  Description" relabel, submit labels, hidden fields disabled), mobile menu ARIA state, slideshow wrap-around,
+  portal eye toggle and Coming Soon flow. All correct.
+- **Contact endpoint**: 37 of 37 tests pass.
+
+**Real bug found and fixed.** `sanitize_text_field()` strips anything shaped like an HTML tag, so the from
+address `Dragonfly Website <onboarding@resend.dev>` was being reduced to `Dragonfly Website`. Resend would have
+rejected every message and the contact form would have failed silently in production. The same flaw sat in the
+settings page's save callback. Fixed with `dfi_sanitize_from()` in `inc/contact-rest.php`, covered by six
+regression tests. Zip rebuilt.
+
+### Then: run in real WordPress (same day)
+
+Chris created the LocalWP site with production's exact stack. The whole suite was re-run under
+**PHP 8.0.30** (27 files clean, all templates render, endpoint tests pass). Then, against real WordPress:
+
+- **All 7 pages return 200 with zero PHP errors**, each picking the right template by slug. Unknown URLs 404.
+- **17 of 17 redirects** return 301 to the right place. Variants also work: no trailing slash, uppercase,
+  and with tracking parameters.
+- **REST route registered** (`/dragonfly/v1/contact`, POST). The page hands out a real nonce and URL.
+- **Security gates on real WordPress**: no nonce 403, bad nonce 403 (WordPress's own cookie check catches
+  it first), honeypot returns ok and sends nothing, invalid email 400, `.exe` / `.php` / `.pdf.exe` all 400.
+- **Real submissions work end to end**: emails captured in Mailpit with correct subject, recipient,
+  reply-to, row labels ("Brief Description" on the sellers tab), and the PDF attached.
+- **Driven in a browser like a visitor**: filled the Leasing tab, submitted, got "Message Received".
+- **Layout vs Next.js at 1440x900, to the pixel**: Home 2628, About 3417, Legal 2905, Privacy 2417,
+  Investor Portal 1143. Every section height identical.
+
+**Three more real bugs found and fixed.** None were visible to the offline harness:
+
+1. **Tab label overwritten (visible bug).** `contact-form.js` found the note paragraph with
+   `querySelector('[data-dfi-note]')`, but the tab BUTTONS carried the same attribute and come first in
+   the DOM. So the script overwrote the "Investors" tab label with the whole note sentence, which wrapped
+   and made the tab bar 99px instead of 46px. Found only because the pixel comparison showed the contact
+   section 53px too tall. Fix: buttons now use `data-dfi-tab-note` / `data-dfi-tab-submit`, and the script
+   selects `p[data-dfi-note]`. Lesson: the earlier tab test passed because it used the same wrong selector,
+   so it checked the wrong element against itself. Assert on the elements a visitor sees.
+2. **`novalidate="false"` disabled browser validation.** `novalidate` is a boolean attribute: present
+   means OFF whatever its value. Removed, so "please fill out this field" prompts work again.
+3. **Attachment arrived as `php5410.tmp`** on the `wp_mail()` fallback path, because the temp upload path
+   was passed without a name. `wp_mail()` accepts attachments keyed by filename (confirmed in this
+   WordPress version's `pluggable.php`), so the array is now keyed that way. Arrives as `deal.pdf`.
+
+Plus one design fix: **failed validation no longer burns rate-limit attempts.** The limiter counted every
+request, so a visitor who mistyped their email five times was locked out for an hour. It now counts only
+submissions that pass validation and are about to send. Proven on real WordPress: 8 bad attempts, then a
+good one goes through.
+
+Test suite is now **39 of 39**. Still unverified: one real Resend delivery, the Settings > Dragonfly page
+in a browser, and phone-width layout.
 
 ## What happened in session 2 (2026-09-10)
 

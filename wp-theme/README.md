@@ -37,6 +37,20 @@ Settings > Permalinks > Post name. Test logged out (the admin bar shifts the sti
 - `dragonfly/assets/img/*`: the referenced files from `public/`. The 14 photo PNGs were converted to JPEG q82 in both
   places (16.5 MB to 1.4 MB). The 13 unreferenced files in `public/` are not shipped.
 
+## Tests (no WordPress needed)
+`tests/` holds an offline harness that stubs just enough of WordPress to execute the theme. It needs only a PHP
+binary; LocalWP bundles one at `%APPDATA%\Local\lightning-services\php-*\bin\win64\php.exe`.
+
+- `php tests/render-test.php` renders all 9 templates and fails on any runtime error (undefined function, bad
+  array key, broken loop) that `php -l` cannot see.
+- `php tests/endpoint-test.php` exercises the contact endpoint: nonce, honeypot, rate limit, validation per tab,
+  email subject/labels/escaping, Resend payload, `wp_mail()` fallback, and the from-address sanitizer.
+- `php tests/dump.php <page-key> <template>` prints one rendered page. Dump all seven into `preview/`, copy
+  `dragonfly/assets` alongside, and serve the folder to eyeball the theme or diff it against the Next.js site.
+
+This is a fast first pass, not a replacement for running the theme in real WordPress. The stubs are simplified
+(for example `sanitize_email()` is a pass-through), so a green run proves the theme's own logic, not WordPress's.
+
 ## Contact form
 `POST /wp-json/dragonfly/v1/contact` (`inc/contact-rest.php`): REST nonce check, honeypot, 5/hour per IP, allowlisted
 fields, file type and 25 MB checks, then Resend HTTP API (key and addresses in Settings > Dragonfly, `inc/settings-page.php`)

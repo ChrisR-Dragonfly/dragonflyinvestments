@@ -43,3 +43,6 @@ next-env.d.ts
 # wordpress theme tooling
 /wp-theme/node_modules
 /wp-theme/dist
+
+# generated static preview of the theme
+/wp-theme/preview
