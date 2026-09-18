@@ -101,6 +101,16 @@ on the dead domain became `info@dragonflyri.com`; no copy or layout was changed,
 "Investor Relations" block now shows the same address as "Our Office". `tests/verify-site.sh` fails if a
 `dragonflyinvestment.com` address ever reappears.
 
+**Update, same day (Chris): `info@dragonflyri.com` is confirmed to be a Google Group that only accepts mail
+from inside the company.** So real visitors WOULD bounce today. Fix, by the group owner or Workspace admin:
+groups.google.com > the `info` group > Group settings > General > **Who can post = Anyone on the web**.
+Leave **Who can join** as invited users only: opening "join" would send every website inquiry to strangers.
+If "Anyone on the web" is greyed out, a super admin must first allow it in admin.google.com > Apps >
+Google Workspace > Groups for Business > Sharing settings. Also check the group's spam setting so held
+messages notify a moderator. This blocks go-live in the sense that the site should not advertise an address
+outsiders cannot reach. No code change is needed. Note the contact FORM does not use `info@`: it sends through
+Resend to `chris@dragonflyri.com`, which Resend's sandbox mode requires until the domain is verified.
+
 Still open, and both need a human:
 - **Send one email to `info@dragonflyri.com` from a NON-company address** (a personal Gmail). The test so far
   came from inside the company. If `info@` is a Google Group limited to the organization, real visitors would
