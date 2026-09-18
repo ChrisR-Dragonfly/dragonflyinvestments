@@ -100,7 +100,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-[#1A3770] mb-6">
               Rooted in Miami. Built on Experience.
             </h2>
-            <div className="space-y-5 text-[#333333] leading-relaxed">
+            <div className="space-y-5 text-[#333333] leading-relaxed text-justify">
               <p>
                 Dragonfly is a private real estate investment and development firm founded
                 in Miami in 2013 by Jason Morjain and Irving Weisselberger. We invest our
@@ -252,7 +252,7 @@ export default function AboutPage() {
                 {/* Bio */}
                 <div className="p-6 space-y-3">
                   {member.bio.map((para, i) => (
-                    <p key={i} className="text-sm text-[#333333]/75 leading-relaxed">
+                    <p key={i} className="text-sm text-[#333333]/75 leading-relaxed text-justify">
                       {para}
                     </p>
                   ))}

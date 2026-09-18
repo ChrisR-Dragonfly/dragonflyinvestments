@@ -87,12 +87,6 @@ export default function HeroSlideshow() {
           >
             View Portfolio
           </Link>
-          <Link
-            href="/contact#contact-form"
-            className="px-8 py-3 tall:py-4 border-2 border-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#C8961A] transition-colors"
-          >
-            Contact Us
-          </Link>
         </div>
       </div>
       </div>

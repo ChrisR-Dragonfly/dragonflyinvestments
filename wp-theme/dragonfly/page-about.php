@@ -16,7 +16,7 @@ get_header();
 		<div>
 			<p class="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">Our Story</p>
 			<h2 class="text-3xl font-bold text-[#1A3770] mb-6">Rooted in Miami. Built on Experience.</h2>
-			<div class="space-y-5 text-[#333333] leading-relaxed">
+			<div class="space-y-5 text-[#333333] leading-relaxed text-justify">
 				<p>
 					Dragonfly is a private real estate investment and development firm founded
 					in Miami in 2013 by Jason Morjain and Irving Weisselberger. We invest our
@@ -132,7 +132,7 @@ get_header();
 					</div>
 					<div class="p-6 space-y-3">
 						<?php foreach ( $member['bio'] as $para ) : ?>
-							<p class="text-sm text-[#333333]/75 leading-relaxed"><?php echo esc_html( $para ); ?></p>
+							<p class="text-sm text-[#333333]/75 leading-relaxed text-justify"><?php echo esc_html( $para ); ?></p>
 						<?php endforeach; ?>
 					</div>
 				</div>

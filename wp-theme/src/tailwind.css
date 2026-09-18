@@ -22,13 +22,16 @@
 
 /* Window-shape variant used by the home slideshow. The slideshow text is compact by default; `tall:` switches
    on the full-size layout when the window has room for it: at least 720px high and no wider than 32:15, or at
-   least 1092px high (ultrawide monitors). Why a shape and not just a height: on wide windows the html font-size
+   least 1080px high (ultrawide monitors). Why a shape and not just a height: on wide windows the html font-size
    rule below scales the whole design up, so the room the text needs grows with the width. 32:15 is 1536x720,
-   the point where that scaling starts; 1092px is 728px of text at the 150% cap.
+   the point where that scaling starts; 1080px is 720px at the 150% cap. Where 720 comes from: navbar + stats bar
+   (15rem = 240px) + full-size text (420px, measured) + its padding (64px) = 724px; the box simply grows by the
+   few missing pixels and the stats bar has 22px of slack. If the slideshow text changes (a button added or
+   removed, a longer headline), re-measure and update these three numbers in BOTH stylesheets.
    There is deliberately no opposite `short:` variant: display scaling produces fractional heights (719.33px is
-   real) that fall between `max-height: 719px` and `min-height: 720px`. A default plus one switch has no gap. */
+   real) that fall between a `max-height: N-1` and a `min-height: N` rule. A default plus one switch has no gap. */
 @custom-variant tall {
-  @media (min-height: 720px) and (max-aspect-ratio: 32/15), (min-height: 1092px) {
+  @media (min-height: 720px) and (max-aspect-ratio: 32/15), (min-height: 1080px) {
     @slot;
   }
 }

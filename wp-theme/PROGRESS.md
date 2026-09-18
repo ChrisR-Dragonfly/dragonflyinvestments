@@ -87,6 +87,17 @@ In every row the text is unclipped and (desktop rows) the stats bar is on screen
 both sites: About 4267, Portfolio 7622, Contact 3390, Legal 3629, Privacy 3020, Investor Portal 1399.
 `verify-site.sh` 50 passed, `next build` passes, zip rebuilt.
 
+Two small edits later the same day (both codebases, same verification):
+- Home slideshow: the **"Contact Us" button was removed, "View Portfolio" stays** (Chris's correction: my first
+  pass removed both). The `tall:` numbers were re-measured for the one-button text block (419.5px) and are now
+  `(min-height: 720px) and (max-aspect-ratio: 32/15), (min-height: 1080px)`; the rule's comment in both
+  stylesheets shows the arithmetic. If a button is added or removed again, re-measure and update those numbers.
+  The home page's bottom banner ("Ready to Explore an Opportunity?", "Get in Touch") and the nav Contact link
+  are untouched. Home heights that changed versus the table above: 390x844 is now 4908, 844x390 is now 3000.
+- About page: `text-justify` on the three "Our Story" paragraphs and on all 12 leadership bio paragraphs, nothing
+  else (checked: 0 of the other 28 paragraphs are justified). Page height unchanged (3417 at 1440x900) on both
+  sites. Caveat told to Chris: justified text on a phone-width column can show wide word gaps.
+
 Lesson: **always test a short window (1280x585, 1366x625) AND a wide one (1920x960), not only a laptop and a
 phone.** A physically bigger monitor can have less room than a laptop (display scaling) or far more.
 

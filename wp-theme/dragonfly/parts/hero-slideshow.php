@@ -33,7 +33,6 @@ $dfi_slides = dfi_hero_slides();
 			</p>
 			<div class="flex flex-wrap gap-4">
 				<a href="<?php echo esc_url( dfi_url( '/portfolio/' ) ); ?>" class="px-8 py-3 tall:py-4 bg-white text-[#1A3770] font-bold text-sm uppercase tracking-widest rounded hover:bg-[#f0f0f0] transition-colors">View Portfolio</a>
-				<a href="<?php echo esc_url( dfi_url( '/contact/' ) . '#contact-form' ); ?>" class="px-8 py-3 tall:py-4 border-2 border-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#C8961A] transition-colors">Contact Us</a>
 			</div>
 		</div>
 	</div>
