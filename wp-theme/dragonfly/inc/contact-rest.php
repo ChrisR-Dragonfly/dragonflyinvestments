@@ -22,7 +22,6 @@ add_action( 'rest_api_init', function () {
 /** app/api/contact/route.ts TAB_LABELS */
 function dfi_contact_tab_labels() {
 	return array(
-		'investors'       => 'Investors',
 		'sellers-brokers' => 'Sellers & Brokers',
 		'leasing'         => 'Leasing',
 		'general'         => 'General',
@@ -37,7 +36,6 @@ function dfi_contact_field_labels() {
 		'phone'            => 'Phone',
 		'company'          => 'Company',
 		'message'          => 'Message',
-		'accredited'       => 'Accredited Investor Confirmed',
 		'propertyType'     => 'Property Type',
 		'location'         => 'Location',
 		'dealSize'         => 'Deal Size',
@@ -113,9 +111,6 @@ function dfi_contact_submit( WP_REST_Request $request ) {
 	$values['email'] = $email;
 	if ( in_array( $tab, array( 'sellers-brokers', 'general' ), true ) && empty( $values['message'] ) ) {
 		return dfi_contact_error( 'missing_message', 'Please enter a message.', 400 );
-	}
-	if ( 'investors' === $tab && empty( $values['accredited'] ) ) {
-		return dfi_contact_error( 'missing_accredited', 'Please confirm your accredited investor status.', 400 );
 	}
 
 	// 5. Optional attachment (Sellers & Brokers tab only).

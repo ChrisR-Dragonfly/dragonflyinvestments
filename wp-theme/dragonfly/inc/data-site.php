@@ -162,13 +162,12 @@ function dfi_team() {
 	);
 }
 
-/** app/contact/page.tsx `tabs` */
+/** app/contact/page.tsx `tabs`. The first tab is the one the form opens on (parts/contact-form.php reads it). */
 function dfi_contact_tabs() {
 	return array(
-		array( 'key' => 'investors', 'label' => 'Investors', 'note' => 'Connect with our investor relations team. We respond within one business day.', 'submitLabel' => 'Send Message' ),
-		array( 'key' => 'sellers-brokers', 'label' => 'Sellers & Brokers', 'note' => 'We respond to every qualified submission within 2 business days.', 'submitLabel' => 'Submit Deal' ),
-		array( 'key' => 'leasing', 'label' => 'Leasing', 'note' => 'Our leasing team will be in touch within 2 business days.', 'submitLabel' => 'Submit Leasing Inquiry' ),
-		array( 'key' => 'general', 'label' => 'General', 'note' => '', 'submitLabel' => 'Send Message' ),
+		array( 'key' => 'sellers-brokers', 'label' => 'Sellers & Brokers', 'note' => 'We respond to every qualified submission within 2 business days.', 'submitLabel' => 'Submit Deal', 'placeholder' => 'Describe the property, asking price, and any relevant deal details...' ),
+		array( 'key' => 'leasing', 'label' => 'Leasing', 'note' => 'Our leasing team will be in touch within 2 business days.', 'submitLabel' => 'Submit Leasing Inquiry', 'placeholder' => 'Tell us about your space requirements, timeline, and preferred location...' ),
+		array( 'key' => 'general', 'label' => 'General', 'note' => '', 'submitLabel' => 'Send Message', 'placeholder' => 'Tell us how we can help...' ),
 	);
 }
 

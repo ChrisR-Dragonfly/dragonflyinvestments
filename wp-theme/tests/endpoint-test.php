@@ -25,28 +25,28 @@ function reset_state( $with_key = true ) {
 	$GLOBALS['dfi_mails']      = array();
 	$GLOBALS['dfi_options']    = $with_key ? array( 'dfi_resend_api_key' => 're_test_key' ) : array();
 }
-$valid_investor = array( 'tab' => 'investors', 'name' => 'Jane Doe', 'email' => 'jane@example.com', 'phone' => '305-555-0100', 'accredited' => 'Yes', 'message' => 'Hello' );
+$valid = array( 'tab' => 'general', 'name' => 'Jane Doe', 'email' => 'jane@example.com', 'message' => 'Hello' );
 
 echo "== security gates ==\n";
 reset_state();
-$r = dfi_contact_submit( req( $valid_investor, 'stale' ) );
+$r = dfi_contact_submit( req( $valid, 'stale' ) );
 check( 'bad nonce rejected with 403', 403 === $r->status && 'bad_nonce' === $r->data['code'] );
 check( 'bad nonce sends nothing', 0 === count( $GLOBALS['dfi_posts'] ) );
 
 reset_state();
-$r = dfi_contact_submit( req( $valid_investor + array( 'website' => 'http://spam.example' ) ) );
+$r = dfi_contact_submit( req( $valid + array( 'website' => 'http://spam.example' ) ) );
 check( 'honeypot returns ok:true', 200 === $r->status && true === $r->data['ok'] );
 check( 'honeypot sends nothing', 0 === count( $GLOBALS['dfi_posts'] ) );
 
 reset_state();
-for ( $i = 1; $i <= 5; $i++ ) { $r = dfi_contact_submit( req( $valid_investor ) ); }
+for ( $i = 1; $i <= 5; $i++ ) { $r = dfi_contact_submit( req( $valid ) ); }
 check( '5th attempt still allowed', 200 === $r->status );
-$r = dfi_contact_submit( req( $valid_investor ) );
+$r = dfi_contact_submit( req( $valid ) );
 check( '6th attempt rate limited (429)', 429 === $r->status && 'rate_limited' === $r->data['code'] );
 
 reset_state();
-for ( $i = 1; $i <= 8; $i++ ) { $p = $valid_investor; $p['email'] = 'typo'; dfi_contact_submit( req( $p ) ); }
-$r = dfi_contact_submit( req( $valid_investor ) );
+for ( $i = 1; $i <= 8; $i++ ) { $p = $valid; $p['email'] = 'typo'; dfi_contact_submit( req( $p ) ); }
+$r = dfi_contact_submit( req( $valid ) );
 check( 'failed validation does not burn rate-limit attempts', 200 === $r->status, 'status ' . $r->status );
 
 reset_state( false );
@@ -57,17 +57,21 @@ check( 'wp_mail attachment keyed by real filename (not phpXXXX.tmp)', array( 'de
 unlink( $tmp );
 
 echo "== validation ==\n";
-reset_state(); $p = $valid_investor; unset( $p['name'] );
+reset_state(); $p = $valid; unset( $p['name'] );
 $r = dfi_contact_submit( req( $p ) );
 check( 'missing name -> 400', 400 === $r->status && 'missing_name' === $r->data['code'] );
 
-reset_state(); $p = $valid_investor; $p['email'] = 'not-an-email';
+reset_state(); $p = $valid; $p['email'] = 'not-an-email';
 $r = dfi_contact_submit( req( $p ) );
 check( 'invalid email -> 400', 400 === $r->status && 'invalid_email' === $r->data['code'] );
 
-reset_state(); $p = $valid_investor; unset( $p['accredited'] );
-$r = dfi_contact_submit( req( $p ) );
-check( 'investors without accredited -> 400', 400 === $r->status && 'missing_accredited' === $r->data['code'] );
+// The Investors tab was removed 2026-09-18. A page left open from before may still post it: deliver it as General.
+reset_state();
+$r = dfi_contact_submit( req( array( 'tab' => 'investors', 'name' => 'Old Page', 'email' => 'old@example.com', 'phone' => '305-555-0100', 'accredited' => 'Yes', 'message' => 'Hi' ) ) );
+$payload = json_decode( $GLOBALS['dfi_posts'][0][1]['body'], true );
+check( 'removed investors tab is delivered as a General inquiry', 200 === $r->status && 'New General Inquiry — Dragonfly Website' === $payload['subject'], $payload['subject'] );
+check( 'removed accredited field never reaches the email', false === stripos( $payload['html'], 'accredited' ) );
+check( 'no investors tab and no accredited field are defined', ! isset( dfi_contact_tab_labels()['investors'] ) && ! isset( dfi_contact_field_labels()['accredited'] ) );
 
 reset_state();
 $r = dfi_contact_submit( req( array( 'tab' => 'general', 'name' => 'A', 'email' => 'a@example.com' ) ) );
@@ -79,20 +83,20 @@ check( 'leasing without message is fine (optional)', 200 === $r->status );
 
 echo "== email content ==\n";
 reset_state();
-$r = dfi_contact_submit( req( $valid_investor ) );
-check( 'valid investor -> 200 ok', 200 === $r->status && true === $r->data['ok'] );
+$r = dfi_contact_submit( req( $valid ) );
+check( 'valid general inquiry -> 200 ok', 200 === $r->status && true === $r->data['ok'] );
 check( 'exactly one Resend call', 1 === count( $GLOBALS['dfi_posts'] ) );
 $call    = $GLOBALS['dfi_posts'][0];
 $payload = json_decode( $call[1]['body'], true );
 check( 'posts to Resend API', 'https://api.resend.com/emails' === $call[0] );
 check( 'bearer key sent', 'Bearer re_test_key' === $call[1]['headers']['Authorization'] );
-check( 'subject matches Next route', 'New Investors Inquiry — Dragonfly Website' === $payload['subject'], $payload['subject'] );
+check( 'subject matches Next route', 'New General Inquiry — Dragonfly Website' === $payload['subject'], $payload['subject'] );
 check( 'default recipient', array( 'chris@dragonflyri.com' ) === $payload['to'] );
 check( 'default sandbox sender', 'Dragonfly Website <onboarding@resend.dev>' === $payload['from'] );
 check( 'reply_to is the submitter', 'jane@example.com' === $payload['reply_to'] );
 check( 'html has Name row', false !== strpos( $payload['html'], '>Name</td>' ) && false !== strpos( $payload['html'], 'Jane Doe' ) );
-check( 'html has accredited label', false !== strpos( $payload['html'], 'Accredited Investor Confirmed' ) );
-check( 'tab/website fields not in email', false === strpos( $payload['html'], 'investors</td>' ) && false === strpos( $payload['html'], 'website' ) );
+check( 'html has Message row', false !== strpos( $payload['html'], '>Message</td>' ) && false !== strpos( $payload['html'], 'Hello' ) );
+check( 'tab/website fields not in email', false === strpos( $payload['html'], 'general</td>' ) && false === strpos( $payload['html'], 'website' ) );
 
 reset_state();
 $r = dfi_contact_submit( req( array( 'tab' => 'sellers-brokers', 'name' => 'B', 'email' => 'b@example.com', 'message' => 'Deal details', 'dealSize' => '$5,000,000' ) ) );
@@ -115,7 +119,7 @@ check( 'non-allowlisted field dropped', false === strpos( $payload['html'], 'evi
 
 echo "== fallback ==\n";
 reset_state( false );
-$r = dfi_contact_submit( req( $valid_investor ) );
+$r = dfi_contact_submit( req( $valid ) );
 check( 'no API key -> uses wp_mail, not Resend', 200 === $r->status && 1 === count( $GLOBALS['dfi_mails'] ) && 0 === count( $GLOBALS['dfi_posts'] ) );
 $mail = $GLOBALS['dfi_mails'][0];
 check( 'wp_mail gets html content-type + reply-to', in_array( 'Content-Type: text/html; charset=UTF-8', $mail[3], true ) && in_array( 'Reply-To: jane@example.com', $mail[3], true ) );

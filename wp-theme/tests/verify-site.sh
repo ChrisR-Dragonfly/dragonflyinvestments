@@ -30,6 +30,12 @@ echo "$about" | grep -q 'rsm-svg' && ok "about footprint map inlined" || bad "ab
 contact=$(curl -s -A "$UA" --max-time 40 "$BASE/contact/")
 echo "$contact" | grep -q 'id="contact-form"' && ok "contact anchor #contact-form" || bad "contact anchor missing"
 echo "$contact" | grep -q '"restUrl"' && ok "contact page hands out REST url + nonce" || bad "contact page missing DFI config"
+# The form has 3 tabs. The Investors tab (and its accredited-investor checkbox) was removed 2026-09-18.
+n=$(echo "$contact" | grep -o 'data-dfi-tab="[^"]*"' | wc -l); [ "$n" = "3" ] && ok "contact form has 3 tabs" || bad "contact form has $n tabs (want 3: Sellers & Brokers, Leasing, General)"
+echo "$contact" | grep -q 'data-dfi-tab="investors"' && bad "the removed Investors tab is on the page (old theme zip uploaded?)" || ok "no Investors tab"
+echo "$contact" | grep -q 'name="accredited"' && bad "the removed accredited-investor checkbox is on the page" || ok "no accredited-investor checkbox"
+echo "$contact" | grep -q 'name="tab" value="sellers-brokers"' && ok "contact form opens on Sellers & Brokers" || bad "contact form does not open on Sellers & Brokers"
+echo "$contact" | grep -q 'href="mailto:info@dragonflyri.com?subject=Investor%20overview%20request"' && ok "'Request the Overview' button emails info@ with the subject filled in" || bad "'Request the Overview' mailto link (with subject) missing"
 echo "$home" | grep -q 'draognflyri' && bad "the old email typo is present" || ok "no 'draognflyri' typo"
 portal=$(curl -s -A "$UA" --max-time 40 "$BASE/investor-portal/")
 # dragonflyinvestment.com has no mail records (checked 2026-09-18), so any address on it bounces.

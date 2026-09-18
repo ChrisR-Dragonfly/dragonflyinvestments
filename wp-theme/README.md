@@ -50,13 +50,19 @@ binary; LocalWP bundles one at `%APPDATA%\Local\lightning-services\php-*\bin\win
 
 - `bash tests/verify-site.sh <base-url>` checks a RUNNING WordPress site from the outside with curl: pages,
   content sanity, assets, all 17 redirects, 404, and the contact endpoint. Read-only, it never submits the
-  form. 45 checks, including that no dead `@dragonflyinvestment.com` address is on the site. Run it against the
-  live site right after go-live.
+  form. 50 checks, including that the form has exactly 3 tabs (no Investors tab, no accredited checkbox) and that no
+  dead `@dragonflyinvestment.com` address is on the site. Run it against the live site right after go-live.
 
 This is a fast first pass, not a replacement for running the theme in real WordPress. The stubs are simplified
 (for example `sanitize_email()` is a pass-through), so a green run proves the theme's own logic, not WordPress's.
 
 ## Contact form
+Three tabs: Sellers & Brokers, Leasing, General (the Investors tab was removed 2026-09-18 at the owner's request;
+a stale page that still posts `tab=investors` is delivered as a General inquiry). The tab list lives in
+`dfi_contact_tabs()` (`inc/data-site.php`). The form opens on the FIRST tab in that list: `parts/contact-form.php`
+renders that tab's state server-side and `contact-form.js` reads it back, so reordering tabs needs no other edit.
+The "Request the Overview" button on the contact page is a plain `mailto:` link, not part of the form.
+
 `POST /wp-json/dragonfly/v1/contact` (`inc/contact-rest.php`): REST nonce check, honeypot, 5/hour per IP, allowlisted
 fields, file type and 25 MB checks, then Resend HTTP API (key and addresses in Settings > Dragonfly, `inc/settings-page.php`)
 with a `wp_mail()` fallback when no key is saved. Note: the nonce check assumes no full-page cache plugin. If one is

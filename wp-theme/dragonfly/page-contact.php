@@ -55,10 +55,10 @@ $dfi_steps = array(
 		<div class="mt-8 bg-[#f7f8fa] border border-[#dddddd] rounded p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
 			<div>
 				<p class="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-2">Investor Overview</p>
-				<h3 class="text-[#1A3770] text-xl font-bold mb-1">Download the Dragonfly investor overview (PDF).</h3>
-				<p class="text-sm text-[#333333]/60">A one-page firm overview with portfolio stats, strategy, and team. Email required for delivery.</p>
+				<h3 class="text-[#1A3770] text-xl font-bold mb-1">Request the Dragonfly investor overview (PDF).</h3>
+				<p class="text-sm text-[#333333]/60">A one-page firm overview with portfolio stats, strategy, and team. Sent by email on request.</p>
 			</div>
-			<button type="button" data-dfi-scroll-to="contact-form" class="shrink-0 px-6 py-3 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-wider rounded hover:bg-[#B8840F] transition-colors whitespace-nowrap">Request the Overview &rarr;</button>
+			<a href="mailto:info@dragonflyri.com?subject=Investor%20overview%20request" class="shrink-0 px-6 py-3 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-wider rounded hover:bg-[#B8840F] transition-colors whitespace-nowrap">Request the Overview &rarr;</a>
 		</div>
 	</div>
 </section>
@@ -80,7 +80,7 @@ $dfi_steps = array(
 				<p class="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-3">Work With Us</p>
 				<h2 class="text-3xl font-bold text-[#1A3770] mb-3">Get in touch.</h2>
 				<p class="text-[#333333]/70 text-sm leading-relaxed mb-8">
-					Four audiences, four paths. Choose the one that fits and a member of our
+					Three audiences, three paths. Choose the one that fits and a member of our
 					team will respond personally.
 				</p>
 				<?php dfi_part( 'contact-form' ); ?>

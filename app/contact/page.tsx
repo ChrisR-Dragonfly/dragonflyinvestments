@@ -42,12 +42,6 @@ const propertyOptions = [
 
 const tabs = [
   {
-    key: "investors",
-    label: "Investors",
-    note: "Connect with our investor relations team. We respond within one business day.",
-    submitLabel: "Send Message",
-  },
-  {
     key: "sellers-brokers",
     label: "Sellers & Brokers",
     note: "We respond to every qualified submission within 2 business days.",
@@ -87,7 +81,6 @@ const initialForm = {
   email: "",
   phone: "",
   message: "",
-  accredited: false,
   company: "",
   propertyType: "",
   location: "",
@@ -112,12 +105,8 @@ export default function ContactPage() {
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      setForm((prev) => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleTabChange(key: string) {
@@ -134,11 +123,7 @@ export default function ContactPage() {
     const data = new FormData();
     data.append("tab", activeTab);
     Object.entries(form).forEach(([key, value]) => {
-      if (typeof value === "boolean") {
-        if (value) data.append(key, "Yes");
-      } else if (value) {
-        data.append(key, value);
-      }
+      if (value) data.append(key, value);
     });
     if (file) data.append("file", file);
 
@@ -259,18 +244,18 @@ export default function ContactPage() {
                 Investor Overview
               </p>
               <h3 className="text-[#1A3770] text-xl font-bold mb-1">
-                Download the Dragonfly investor overview (PDF).
+                Request the Dragonfly investor overview (PDF).
               </h3>
               <p className="text-sm text-[#333333]/60">
-                A one-page firm overview with portfolio stats, strategy, and team. Email required for delivery.
+                A one-page firm overview with portfolio stats, strategy, and team. Sent by email on request.
               </p>
             </div>
-            <button
-              onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
+            <a
+              href="mailto:info@dragonflyri.com?subject=Investor%20overview%20request"
               className="shrink-0 px-6 py-3 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-wider rounded hover:bg-[#B8840F] transition-colors whitespace-nowrap"
             >
               Request the Overview →
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -306,7 +291,7 @@ export default function ContactPage() {
                   Get in touch.
                 </h2>
                 <p className="text-[#333333]/70 text-sm leading-relaxed mb-8">
-                  Four audiences, four paths. Choose the one that fits and a member of our
+                  Three audiences, three paths. Choose the one that fits and a member of our
                   team will respond personally.
                 </p>
 
@@ -333,7 +318,7 @@ export default function ContactPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name + Email/Phone (Investors tab swaps Email and Phone order) */}
+                  {/* Name + Email */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
@@ -349,40 +334,6 @@ export default function ContactPage() {
                         className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
                       />
                     </div>
-                    {activeTab === "investors" ? (
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                          Phone
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={form.phone}
-                          onChange={handleChange}
-                          placeholder="+1 (305) 000-0000"
-                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
-                        />
-                      </div>
-                    ) : (
-                      <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
-                          Email <span className="text-[#C8961A]">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          required
-                          value={form.email}
-                          onChange={handleChange}
-                          placeholder="john@example.com"
-                          className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Investors: Email */}
-                  {activeTab === "investors" && (
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2">
                         Email <span className="text-[#C8961A]">*</span>
@@ -397,7 +348,7 @@ export default function ContactPage() {
                         className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors"
                       />
                     </div>
-                  )}
+                  </div>
 
                   {/* Sellers & Brokers + Leasing: Company / Phone */}
                   {(activeTab === "sellers-brokers" || activeTab === "leasing") && (
@@ -612,31 +563,11 @@ export default function ContactPage() {
                           ? "Describe the property, asking price, and any relevant deal details..."
                           : activeTab === "leasing"
                           ? "Tell us about your space requirements, timeline, and preferred location..."
-                          : activeTab === "investors"
-                          ? "Tell us about your investment goals and how you'd like to get involved..."
                           : "Tell us how we can help..."
                       }
                       className="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors resize-none"
                     />
                   </div>
-
-                  {/* Investors: accredited checkbox */}
-                  {activeTab === "investors" && (
-                    <label className="flex items-start gap-3 text-sm text-[#333333] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="accredited"
-                        required
-                        checked={form.accredited}
-                        onChange={handleChange}
-                        className="mt-0.5 accent-[#C8961A]"
-                      />
-                      <span>
-                        I confirm I am an accredited investor as defined by SEC Rule 501 of
-                        Regulation D.
-                      </span>
-                    </label>
-                  )}
 
                   {error && (
                     <p className="text-sm text-red-600">

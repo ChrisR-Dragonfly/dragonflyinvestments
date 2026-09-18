@@ -1,8 +1,50 @@
 # Dragonfly WordPress rebuild — progress and next steps
 
-Last updated: 2026-09-18 (session 4). Read this first when picking the work back up.
+Last updated: 2026-09-18 (session 5). Read this first when picking the work back up.
 Full plan: `C:\Users\chris\.claude\plans\humble-splashing-newell.md`
+Launch checklist: `wp-theme/GO-LIVE.md` (replaces the stale "Phase 9" list in the plan file)
 Backup detail: `C:\Users\chris\Documents\dragonflyri-wordpress-backup-2026-09\STATUS.md`
+
+## Contact form: two decisions on 2026-09-18 (session 5)
+
+1. Morning (Chris): remove the contact form, visitors email `info@dragonflyri.com`. Built and tested in both
+   codebases (50 checks passing, parity proven) but **never committed**.
+2. Afternoon (Chris's boss): **reversed. Keep the form exactly as it was, minus the Investors tab.**
+   This is the current state, done in both codebases and committed.
+
+What the form is now:
+- **3 tabs: Sellers & Brokers (opens first), Leasing, General.** No Investors tab, no accredited-investor checkbox.
+  Every tab starts with Name + Email. Intro line now reads "Three audiences, three paths."
+- The "Request the Overview (PDF)" button used to scroll to the form's Investors tab. Chris chose: it is now an
+  email link, `mailto:info@dragonflyri.com?subject=Investor%20overview%20request`. `assets/js/scroll.js` was its
+  only user and is deleted.
+- A page left open from before that still posts `tab=investors` is delivered as a General inquiry (tested).
+- Theme: `dfi_contact_tabs()` in `inc/data-site.php` is the single source of truth. The form opens on the FIRST tab
+  in that list; `parts/contact-form.php` renders that tab's state and `contact-form.js` reads it back. If the boss
+  wants General first, reorder that one array (and the `tabs` array in `app/contact/page.tsx`), nothing else.
+- Everything else is as before: `#contact-form` anchors, legal wording that mentions forms, the "Investor
+  Relations" sidebar block, the endpoint, the settings page, optional Resend with `wp_mail()` fallback.
+
+Proof (all on 2026-09-18): PHP 8.0.30 syntax clean on 28 files; `render-test.php` 9 templates; `endpoint-test.php`
+41 passed; `verify-site.sh http://dragonfly-local.local` **50 passed, 0 failed** (5 new checks, each proven to fail
+on the old 4-tab page); `npx next build` passes with `/api/contact` back. Layout parity theme vs Next.js on the
+Contact page for EACH tab under the same pixel ratio: 1440x900 = 2707 / 2746 / 2254 px, 390x844 = 4988 / 5030 /
+4343 px, section heights equal, text identical except the theme's off-screen spam-trap label "Website" (by design).
+Three real submissions on the local site (PDF on Sellers & Brokers) all arrived in Local's mail catcher with the
+right subject, fields, reply-to and attachment name. The Next.js form was NOT submitted (a real submit sends a
+real email through Resend). Spot-check after the CSS rebuild, 1440 wide, same pixel ratio: Home 2628 px and Legal
+2905 px on both sites, same as before.
+
+**The no-form version is parked, not lost:** `git stash list` on branch `wordpress-theme` shows
+"no-contact-form version, reversed by boss 2026-09-18". To bring it back: clean tree, then `git stash apply`.
+A stash lives only on this PC, it is not on GitHub.
+
+Measuring traps met today, so nobody chases them again:
+- Compare page heights only when `devicePixelRatio` is identical on both pages (it flipped between 2 and
+  2.00000009 at phone size and produced a fake 17 px difference).
+- The Browser pane, when hidden, draws no frames: anchor jumps and `scroll-behavior: smooth` do not move until a
+  screenshot forces a frame, and may freeze mid-scroll. Links were therefore checked by `href` + target id, plus
+  one full landing seen on each site. Screenshots from the hidden pane come out blank or tiny.
 
 ## The goal in one paragraph
 
@@ -47,25 +89,28 @@ Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Ver
 - Upload `Documents/dragonflyri-wordpress-backup-2026-09-18.zip` to Drive. Privacy: its `older-backups/`
   folder holds the 2023 database with 110 investor email addresses, so choose the Drive folder with care.
 
-### 2. Chris: send one test email to `info@dragonflyri.com` from a personal (non-company) address
+### 2. Chris (or the group owner): open `info@dragonflyri.com` to outside senders, then test it
 
-See "Email addresses" below for why. Thirty seconds, and it is the last unknown about the public contact address.
+It is a Google Group that only accepts company senders today, so a visitor's email bounces. Exact clicks are
+in "Email addresses" below and in `GO-LIVE.md`. Then send one test from a personal (non-company) address.
 
-### 3. One real email through Resend (needs Chris, because Claude never enters API keys)
+### 3. Optional: one real email through Resend (needs Chris, because Claude never enters API keys)
 
-In the local site's wp-admin: Settings > Dragonfly, paste a sending-only Resend key, Save, click
-"Send test email", confirm it reaches chris@dragonflyri.com. Everything else about the form is proven.
+Resend is optional on WordPress: with no key saved the theme sends through `wp_mail()`, like the old site's
+form did, and that path is proven locally. To try Resend: local wp-admin > Settings > Dragonfly, paste a
+sending-only key, Save Settings, "Send test email". The key pasted into a chat in session 1 should be ROTATED
+(new key into Vercel and `.env.local`, then revoke the old one), not just revoked: the Next.js form needs a key.
 
 ### 4. Go-live
 
-Ordered checklist is in the plan file, "Phase 9". After Chris activates the theme on the live site, run
-the acceptance test, which is read-only and never submits the form:
+Ordered checklist: **`wp-theme/GO-LIVE.md`**. After Chris activates the theme on the live site, run the
+acceptance test, which is read-only and never submits the form:
 
 ```
 bash wp-theme/tests/verify-site.sh https://www.dragonflyri.com
 ```
 
-It must end with `45 passed, 0 failed`. Lessons from the local rehearsal that apply directly:
+It must end with `50 passed, 0 failed`. Lessons from the local rehearsal that apply directly:
 
 - **Slug collisions are real.** Locally, WordPress's built-in draft "Privacy Policy" page held the
   `privacy-policy` slug, so the new page silently became `privacy-policy-2` and its template would
@@ -320,8 +365,8 @@ question for Chris, not urgent, and deleting accounts is destructive.
 
 ## Session 1 recap: what the theme contains
 
-64 files in `wp-theme/dragonfly/`, packaged to `wp-theme/dist/dragonfly-theme-v1.0.0.zip`
-(5.5 MB, one top-level `dragonfly/` folder, forward-slash paths).
+63 files in `wp-theme/dragonfly/` (was 64 until `scroll.js` was deleted on 2026-09-18), packaged to
+`wp-theme/dist/dragonfly-theme-v1.0.0.zip` (5.5 MB, one top-level `dragonfly/` folder, forward-slash paths).
 
 - All 7 pages ported, Tailwind classes and copy verbatim.
 - Data arrays: `inc/data-site.php` (nav, hero slides, stats, 8 focus areas, differentiators,
@@ -331,7 +376,7 @@ question for Chris, not urgent, and deleting accounts is destructive.
   `assets/img/footprint-map.svg`. Verified viewBox `0 0 960 560`, 56 paths, 48 circles, no React-only
   attributes. Inlined with `file_get_contents()`, no runtime CDN call.
 - Icons: `parts/icons.php` generated by `gen-icons.mjs` from `node_modules/lucide-react`.
-- 5 vanilla JS files, all pass `node --check`.
+- 4 vanilla JS files (`nav`, `slideshow`, `portfolio-filter`, `contact-form`), all pass `node --check`.
 - Contact endpoint `inc/contact-rest.php`: REST nonce, honeypot, 5/hour per IP, allowlisted and
   sanitized fields, file type + 25 MB checks, Resend HTTP API, `wp_mail()` fallback.
 - Settings page `inc/settings-page.php`: Settings > Dragonfly. Resend key, recipient, from address,

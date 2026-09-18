@@ -2,8 +2,15 @@
 /**
  * Contact form (app/contact/page.tsx). Every tab's fields are in the DOM; contact-form.js shows one tab's
  * groups (data-dfi-tabs lists the tabs a group belongs to) and disables the rest so they neither validate nor submit.
+ * The form opens on the first tab of dfi_contact_tabs(): the markup below starts in that tab's state (same rules
+ * as setTab() in contact-form.js), so the first paint is already right and reordering the tabs needs no edit here.
  */
 $dfi_tabs   = dfi_contact_tabs();
+$dfi_first  = $dfi_tabs[0];
+$dfi_group  = function ( $tabs ) use ( $dfi_first ) {
+	return 'data-dfi-group data-dfi-tabs="' . esc_attr( $tabs ) . '"' . ( in_array( $dfi_first['key'], explode( ' ', $tabs ), true ) ? '' : ' hidden' );
+};
+$dfi_message_required = in_array( $dfi_first['key'], array( 'sellers-brokers', 'general' ), true );
 $dfi_input  = 'w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors';
 $dfi_select = 'w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] focus:outline-none focus:border-[#C8961A] transition-colors bg-white';
 $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-2';
@@ -14,10 +21,10 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 	<?php endforeach; ?>
 </div>
 
-<p class="text-[#333333]/60 text-xs mb-8 italic" data-dfi-note><?php echo esc_html( $dfi_tabs[0]['note'] ); ?></p>
+<p class="text-[#333333]/60 text-xs mb-8 italic" data-dfi-note<?php echo '' === $dfi_first['note'] ? ' hidden' : ''; ?>><?php echo esc_html( $dfi_first['note'] ); ?></p>
 
 <form class="space-y-6" data-dfi-contact-form enctype="multipart/form-data">
-	<input type="hidden" name="tab" value="investors" data-dfi-tab-input>
+	<input type="hidden" name="tab" value="<?php echo esc_attr( $dfi_first['key'] ); ?>" data-dfi-tab-input>
 	<div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
 		<label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
 	</div>
@@ -27,22 +34,13 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 			<label class="<?php echo $dfi_label; ?>" for="dfi-name">Name <span class="text-[#C8961A]">*</span></label>
 			<input id="dfi-name" type="text" name="name" required placeholder="John Smith" class="<?php echo $dfi_input; ?>">
 		</div>
-		<div data-dfi-group data-dfi-tabs="investors">
-			<label class="<?php echo $dfi_label; ?>" for="dfi-phone-inv">Phone</label>
-			<input id="dfi-phone-inv" type="tel" name="phone" placeholder="+1 (305) 000-0000" class="<?php echo $dfi_input; ?>">
-		</div>
-		<div data-dfi-group data-dfi-tabs="sellers-brokers leasing general" hidden>
+		<div>
 			<label class="<?php echo $dfi_label; ?>" for="dfi-email">Email <span class="text-[#C8961A]">*</span></label>
 			<input id="dfi-email" type="email" name="email" required placeholder="john@example.com" class="<?php echo $dfi_input; ?>">
 		</div>
 	</div>
 
-	<div data-dfi-group data-dfi-tabs="investors">
-		<label class="<?php echo $dfi_label; ?>" for="dfi-email-inv">Email <span class="text-[#C8961A]">*</span></label>
-		<input id="dfi-email-inv" type="email" name="email" required placeholder="john@example.com" class="<?php echo $dfi_input; ?>">
-	</div>
-
-	<div class="grid grid-cols-1 sm:grid-cols-2 gap-6" data-dfi-group data-dfi-tabs="sellers-brokers leasing" hidden>
+	<div class="grid grid-cols-1 sm:grid-cols-2 gap-6" <?php echo $dfi_group( 'sellers-brokers leasing' ); ?>>
 		<div>
 			<label class="<?php echo $dfi_label; ?>" for="dfi-company">Company</label>
 			<input id="dfi-company" type="text" name="company" placeholder="Company name" class="<?php echo $dfi_input; ?>">
@@ -53,7 +51,7 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 		</div>
 	</div>
 
-	<div class="space-y-6" data-dfi-group data-dfi-tabs="sellers-brokers" hidden>
+	<div class="space-y-6" <?php echo $dfi_group( 'sellers-brokers' ); ?>>
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 			<div>
 				<label class="<?php echo $dfi_label; ?>" for="dfi-property-type">Property Type</label>
@@ -80,7 +78,7 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 		</div>
 	</div>
 
-	<div class="space-y-6" data-dfi-group data-dfi-tabs="leasing" hidden>
+	<div class="space-y-6" <?php echo $dfi_group( 'leasing' ); ?>>
 		<div>
 			<p class="block text-xs font-semibold uppercase tracking-wider text-[#1A3770] mb-3">I am&hellip;</p>
 			<div class="flex flex-wrap gap-6">
@@ -124,21 +122,13 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 	</div>
 
 	<div>
-		<label class="<?php echo $dfi_label; ?>" for="dfi-message"><span data-dfi-message-label>Message</span> <span class="text-[#C8961A]" data-dfi-message-star hidden>*</span></label>
-		<textarea id="dfi-message" name="message" rows="6" data-dfi-message
-			data-ph-investors="Tell us about your investment goals and how you'd like to get involved..."
-			data-ph-sellers-brokers="Describe the property, asking price, and any relevant deal details..."
-			data-ph-leasing="Tell us about your space requirements, timeline, and preferred location..."
-			data-ph-general="Tell us how we can help..."
-			placeholder="Tell us about your investment goals and how you'd like to get involved..."
+		<label class="<?php echo $dfi_label; ?>" for="dfi-message"><span data-dfi-message-label><?php echo 'sellers-brokers' === $dfi_first['key'] ? 'Brief Description' : 'Message'; ?></span> <span class="text-[#C8961A]" data-dfi-message-star<?php echo $dfi_message_required ? '' : ' hidden'; ?>>*</span></label>
+		<textarea id="dfi-message" name="message" rows="6" data-dfi-message<?php echo $dfi_message_required ? ' required' : ''; ?>
+			<?php foreach ( $dfi_tabs as $t ) : ?>
+			data-ph-<?php echo esc_attr( $t['key'] ); ?>="<?php echo esc_attr( $t['placeholder'] ); ?>"
+			<?php endforeach; ?>
+			placeholder="<?php echo esc_attr( $dfi_first['placeholder'] ); ?>"
 			class="w-full border border-[#dddddd] rounded px-4 py-3 text-sm text-[#1A3770] placeholder:text-[#333333]/40 focus:outline-none focus:border-[#C8961A] transition-colors resize-none"></textarea>
-	</div>
-
-	<div data-dfi-group data-dfi-tabs="investors">
-		<label class="flex items-start gap-3 text-sm text-[#333333] cursor-pointer">
-			<input type="checkbox" name="accredited" value="Yes" required class="mt-0.5 accent-[#C8961A]">
-			<span>I confirm I am an accredited investor as defined by SEC Rule 501 of Regulation D.</span>
-		</label>
 	</div>
 
 	<p class="text-sm text-red-600" data-dfi-form-error hidden>
@@ -146,5 +136,5 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 		directly at <a href="mailto:info@dragonflyri.com" class="underline">info@dragonflyri.com</a>.
 	</p>
 
-	<button type="submit" data-dfi-submit class="px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"><?php echo esc_html( $dfi_tabs[0]['submitLabel'] ); ?></button>
+	<button type="submit" data-dfi-submit class="px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"><?php echo esc_html( $dfi_first['submitLabel'] ); ?></button>
 </form>

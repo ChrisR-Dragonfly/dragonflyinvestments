@@ -21,7 +21,7 @@
 	var TAB_OFF = ['border-transparent', 'text-[#333333]/50', 'hover:text-[#1A3770]'];
 	var MESSAGE_REQUIRED = { 'sellers-brokers': true, general: true };
 
-	var active = 'investors';
+	var active = tabInput.value; /* the tab the server rendered as open (first tab of dfi_contact_tabs()) */
 	var submitLabel = submit.textContent;
 
 	function setTab(key) {

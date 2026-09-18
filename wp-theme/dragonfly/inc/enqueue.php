@@ -25,7 +25,6 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_script( 'dfi-portfolio', DFI_URI . '/assets/js/portfolio-filter.js', array(), dfi_asset_version( '/assets/js/portfolio-filter.js' ), $defer );
 	}
 	if ( is_page( 'contact' ) ) {
-		wp_enqueue_script( 'dfi-scroll', DFI_URI . '/assets/js/scroll.js', array(), dfi_asset_version( '/assets/js/scroll.js' ), $defer );
 		wp_enqueue_script( 'dfi-contact', DFI_URI . '/assets/js/contact-form.js', array(), dfi_asset_version( '/assets/js/contact-form.js' ), $defer );
 		wp_localize_script( 'dfi-contact', 'DFI', array(
 			'restUrl' => esc_url_raw( rest_url( 'dragonfly/v1/contact' ) ),

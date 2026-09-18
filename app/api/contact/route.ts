@@ -4,7 +4,6 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TAB_LABELS: Record<string, string> = {
-  investors: "Investors",
   "sellers-brokers": "Sellers & Brokers",
   leasing: "Leasing",
   general: "General",
@@ -16,7 +15,6 @@ const FIELD_LABELS: Record<string, string> = {
   phone: "Phone",
   company: "Company",
   message: "Message",
-  accredited: "Accredited Investor Confirmed",
   propertyType: "Property Type",
   location: "Location",
   dealSize: "Deal Size",
