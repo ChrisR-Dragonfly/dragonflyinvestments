@@ -20,17 +20,15 @@
   --font-sans: "Aptos", "Segoe UI", system-ui, sans-serif;
 }
 
-/* Window-height variants, used by the home slideshow. `short:` = browser window under 720px tall (a 1080p
-   monitor at 150% scaling, a small laptop, a phone on its side). `tall:` = everything else. `short` is written
-   as the literal negation of `tall` because display scaling produces fractional heights (719.33px is real), and
-   both `max-height: 719px` and `height < 720px` (the build rewrites it to 719px) leave that sliver unmatched. */
-@custom-variant short {
-  @media not all and (min-height: 720px) {
-    @slot;
-  }
-}
+/* Window-shape variant used by the home slideshow. The slideshow text is compact by default; `tall:` switches
+   on the full-size layout when the window has room for it: at least 720px high and no wider than 32:15, or at
+   least 1092px high (ultrawide monitors). Why a shape and not just a height: on wide windows the html font-size
+   rule below scales the whole design up, so the room the text needs grows with the width. 32:15 is 1536x720,
+   the point where that scaling starts; 1092px is 728px of text at the 150% cap.
+   There is deliberately no opposite `short:` variant: display scaling produces fractional heights (719.33px is
+   real) that fall between `max-height: 719px` and `min-height: 720px`. A default plus one switch has no gap. */
 @custom-variant tall {
-  @media (min-height: 720px) {
+  @media (min-height: 720px) and (max-aspect-ratio: 32/15), (min-height: 1092px) {
     @slot;
   }
 }
@@ -41,6 +39,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* Big screens: scale the whole design up instead of leaving it a 1280px column in the middle of the screen.
+     Every size on the site is in rem, so this one number does it. 100% (the visitor's own default, normally
+     16px) up to a 1536px wide window, then it grows with the window (1.04167vw is 16px at 1536px), capped at
+     150% (reached at 2304px). Do not add fixed px sizes elsewhere, they would not scale.
+     Trade-off: on a wide window the first browser zoom steps (up to 125%) are absorbed, then zoom works as usual. */
+  font-size: clamp(100%, 1.04167vw, 150%);
 }
 
 body {

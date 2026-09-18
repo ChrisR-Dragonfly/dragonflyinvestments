@@ -48,22 +48,47 @@ with centred text. The text needed 552px, the box was 420px, so the "MIAMI, FLOR
 the buttons at the bottom, and the stats bar fell 53px off screen. Same flaw on 1366x625 laptops, on phones held
 sideways (39px cut each side), and on upright phones the text sat 2px from the edges.
 
-Fix, identical in `components/HeroSlideshow.tsx` and `parts/hero-slideshow.php`:
-- Box is now `min-h-[calc(100dvh-240px)]` (no fixed height, no 420 floor): it still fills the screen between the
+Fix, identical in `components/HeroSlideshow.tsx` and `parts/hero-slideshow.php` (final design, second pass):
+- Box is `min-h-[calc(100dvh-15rem)]` (no fixed height, no 420 floor): it still fills the screen between the
   navbar and the stats bar, but grows when the text needs room. Nothing can be clipped any more.
-- Text wrapper padding `py-16` to `py-8` (on roomy screens the text is centred, so this changes nothing visible).
-- New Tailwind variants in `app/globals.css` and `wp-theme/src/tailwind.css`: `short:` (window under 720px tall)
-  and `tall:`. On short windows the headline drops from 60px to 36px, the paragraph to 16px, spacing tightens, so
-  slideshow + stats bar fit one screen again. `short` is written as `not all and (min-height: 720px)` on purpose:
-  display scaling makes fractional heights (719.33px is real) and `max-height: 719px` misses them.
-- Unchanged on normal screens: 1440x900 and 1920x950 look exactly as before (box 660 / 710px, 60px headline).
+- The slideshow text is COMPACT BY DEFAULT (36px headline, 16px paragraph, tight spacing). One Tailwind variant,
+  `tall:`, defined in `app/globals.css` and `wp-theme/src/tailwind.css`, switches on the full-size layout (60px
+  headline) when the window has room: at least 720px high and no wider than 32:15, or at least 1092px high.
+  There is deliberately no opposite `short:` variant. The first version had one and it broke: display scaling
+  makes fractional heights (719.33px is real) that fall between `max-height: 719px` and `min-height: 720px`, and
+  the build rewrites `height < 720px` back to 719px. A default plus one switch has no gap by construction.
 
-Proof: at 1280x585 box 345px, 44px clear above the label and below the buttons, stats bar on screen. Theme vs
-Next.js identical at the same pixel ratio: 1280x585 = 2307px page, 1440x900 = 2622, 390x844 = 4958, 844x390 = 2996.
+## Whole site scales up on big screens: 2026-09-18 (both codebases)
+
+Report: on the same monitor at **100% scaling** (1920x960 window) the site "looks too squished". Cause: everything
+is capped at a 1280px column (`max-w-7xl`), so it sat in the middle 67% of the screen with 313px empty each side
+and small text. Chris: "I want it to be responsive for these different sizes."
+
+Fix: one rule on `html` in both stylesheets, `font-size: clamp(100%, 1.04167vw, 150%)`. Every size on the site is
+in rem, so this scales the WHOLE design (column width, text, spacing) on wide windows: nothing changes up to
+1536px wide, x1.25 at 1920px (column 1600px = 83% of the screen), capped at x1.5 from 2304px. To make that work
+the only fixed-pixel sizes were converted to rem: the slideshow's `240px` (now `15rem`) and the footer's
+`text-[8px]` / `text-[10px]` (now `text-[0.5rem]` / `text-[0.625rem]`). **Rule from now on: no fixed px sizes in
+class names, they would not scale.** Known trade-off: on a wide window the first browser zoom steps (up to 125%)
+are absorbed, after that zoom works normally.
+
+Proof (theme vs Next.js identical at the same pixel ratio, no sideways scroll anywhere):
+| Window | What it is | Scale | Slideshow box | Headline | Home page height |
+|---|---|---|---|---|---|
+| 1280x585 | 1080p monitor at 150% | 1 | 1217x345 | 36px | 2313 |
+| 1536x730 | 1080p at 125% | 1 | 1280x490 | 60px | 2458 |
+| 1440x900 | reference laptop | 1 | 1280x660 | 60px | 2628 (unchanged from before all this) |
+| 1920x960 | 1080p at 100% | 1.25 | 1600x660 | 75px | 3102 |
+| 1920x800 | wide but low | 1.25 | 1600x500 | 45px | 2942 |
+| 2560x1300 | 1440p at 100% | 1.5 | 1920x940 | 90px | not recorded |
+| 3440x1300 | ultrawide | 1.5 | 1920x940 | 90px | 3857 |
+| 390x844 / 844x390 | phone upright / sideways | 1 | 342x666 / 781x308 | 36px | 4969 / 3004 |
+In every row the text is unclipped and (desktop rows) the stats bar is on screen. Other six pages at 1920 wide,
+both sites: About 4267, Portfolio 7622, Contact 3390, Legal 3629, Privacy 3020, Investor Portal 1399.
 `verify-site.sh` 50 passed, `next build` passes, zip rebuilt.
 
-Lesson: **always test a short window (1280x585 and 1366x625), not only big and phone sizes.** A physically bigger
-monitor often has less room than a laptop because of display scaling.
+Lesson: **always test a short window (1280x585, 1366x625) AND a wide one (1920x960), not only a laptop and a
+phone.** A physically bigger monitor can have less room than a laptop (display scaling) or far more.
 
 Not done, separate topic raised the same day: the slideshow PHOTOS are cropped by the banner shape (1% to 34% of
 their height on a big monitor, up to 54% on short windows) and two photos are low resolution
