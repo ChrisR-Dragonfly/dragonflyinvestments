@@ -14,6 +14,21 @@
   --font-sans: "Aptos", "Segoe UI", system-ui, sans-serif;
 }
 
+/* Window-height variants, used by the home slideshow. `short:` = browser window under 720px tall (a 1080p
+   monitor at 150% scaling, a small laptop, a phone on its side). `tall:` = everything else. `short` is written
+   as the literal negation of `tall` because display scaling produces fractional heights (719.33px is real), and
+   both `max-height: 719px` and `height < 720px` (the build rewrites it to 719px) leave that sliver unmatched. */
+@custom-variant short {
+  @media not all and (min-height: 720px) {
+    @slot;
+  }
+}
+@custom-variant tall {
+  @media (min-height: 720px) {
+    @slot;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

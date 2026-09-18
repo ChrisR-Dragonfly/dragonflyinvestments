@@ -4,7 +4,8 @@
 @source "../dragonfly/**/*.php";
 @source "../dragonfly/assets/js/**/*.js";
 
-/* Everything below is copied verbatim from app/globals.css (lines 3-30) so both sites share one design. */
+/* Everything below is copied verbatim from app/globals.css (everything after its @import line) so both sites
+   share one design. Change one, change the other. */
 @theme inline {
   --color-brand-dark: #1A3770;
   --color-brand-heading: #1A3770;
@@ -17,6 +18,21 @@
   --color-brand-border: #dddddd;
 
   --font-sans: "Aptos", "Segoe UI", system-ui, sans-serif;
+}
+
+/* Window-height variants, used by the home slideshow. `short:` = browser window under 720px tall (a 1080p
+   monitor at 150% scaling, a small laptop, a phone on its side). `tall:` = everything else. `short` is written
+   as the literal negation of `tall` because display scaling produces fractional heights (719.33px is real), and
+   both `max-height: 719px` and `height < 720px` (the build rewrites it to 719px) leave that sliver unmatched. */
+@custom-variant short {
+  @media not all and (min-height: 720px) {
+    @slot;
+  }
+}
+@custom-variant tall {
+  @media (min-height: 720px) {
+    @slot;
+  }
 }
 
 * {

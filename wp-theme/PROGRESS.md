@@ -39,6 +39,36 @@ real email through Resend). Spot-check after the CSS rebuild, 1440 wide, same pi
 "no-contact-form version, reversed by boss 2026-09-18". To bring it back: clean tree, then `git stash apply`.
 A stash lives only on this PC, it is not on GitHub.
 
+## Home slideshow cut off on a big monitor: fixed 2026-09-18 (both codebases)
+
+Report: "slideshow cuts off at the top and bottom when the screen is larger". Reproduced on the actual monitor:
+1920x1080 at **150% Windows scaling**, which gives web pages only about **1280 x 585** usable pixels, LESS than a
+laptop. Cause: the slideshow box had a fixed height (`h-[calc(100dvh-240px)]`, floor 420px) plus `overflow-hidden`
+with centred text. The text needed 552px, the box was 420px, so the "MIAMI, FLORIDA" label was sliced at the top,
+the buttons at the bottom, and the stats bar fell 53px off screen. Same flaw on 1366x625 laptops, on phones held
+sideways (39px cut each side), and on upright phones the text sat 2px from the edges.
+
+Fix, identical in `components/HeroSlideshow.tsx` and `parts/hero-slideshow.php`:
+- Box is now `min-h-[calc(100dvh-240px)]` (no fixed height, no 420 floor): it still fills the screen between the
+  navbar and the stats bar, but grows when the text needs room. Nothing can be clipped any more.
+- Text wrapper padding `py-16` to `py-8` (on roomy screens the text is centred, so this changes nothing visible).
+- New Tailwind variants in `app/globals.css` and `wp-theme/src/tailwind.css`: `short:` (window under 720px tall)
+  and `tall:`. On short windows the headline drops from 60px to 36px, the paragraph to 16px, spacing tightens, so
+  slideshow + stats bar fit one screen again. `short` is written as `not all and (min-height: 720px)` on purpose:
+  display scaling makes fractional heights (719.33px is real) and `max-height: 719px` misses them.
+- Unchanged on normal screens: 1440x900 and 1920x950 look exactly as before (box 660 / 710px, 60px headline).
+
+Proof: at 1280x585 box 345px, 44px clear above the label and below the buttons, stats bar on screen. Theme vs
+Next.js identical at the same pixel ratio: 1280x585 = 2307px page, 1440x900 = 2622, 390x844 = 4958, 844x390 = 2996.
+`verify-site.sh` 50 passed, `next build` passes, zip rebuilt.
+
+Lesson: **always test a short window (1280x585 and 1366x625), not only big and phone sizes.** A physically bigger
+monitor often has less room than a laptop because of display scaling.
+
+Not done, separate topic raised the same day: the slideshow PHOTOS are cropped by the banner shape (1% to 34% of
+their height on a big monitor, up to 54% on short windows) and two photos are low resolution
+(`7500-biscayne.jpg` 980x548, `casa-florida.jpg` 750x422). Options were put to Chris; no decision yet.
+
 Measuring traps met today, so nobody chases them again:
 - Compare page heights only when `devicePixelRatio` is identical on both pages (it flipped between 2 and
   2.00000009 at phone size and produced a fake 17 px difference).
@@ -63,7 +93,11 @@ up first.
 | Live-site email typo | Fixed and verified 2026-09-10 |
 | LocalWP site | **Up**: `http://dragonfly-local.local`, PHP 8.0.30, Apache 2.4.43, MariaDB 10.4.32, WordPress 7.1.1. Matches production |
 
-Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Vercel site is unaffected.
+Branch: `wordpress-theme`, pushed to GitHub. On 2026-09-18 Chris had it merged (fast-forward) into `master` at
+`841b679`. Vercel is the prototype Chris shows his boss: the public link `https://dragonflyinvestments.vercel.app`
+builds from `master` and, checked from outside after the merge, shows the 3-tab form, the email-link overview
+button, no dead email addresses, all 7 pages 200. Branch previews on Vercel need a Vercel login, so the boss can
+only see what is on `master`. The live WordPress site is still the old one, untouched.
 
 ## Local environment (already set up, do not redo)
 

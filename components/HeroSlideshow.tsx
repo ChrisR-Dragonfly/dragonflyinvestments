@@ -29,7 +29,9 @@ export default function HeroSlideshow() {
 
   return (
     <section className="bg-[#f7f8fa] px-6">
-      <div className="relative h-[calc(100dvh-240px)] min-h-[420px] flex items-center overflow-hidden rounded border border-[#dddddd] shadow-sm max-w-7xl mx-auto">
+      {/* min-h, never a fixed h: the box fills the screen between navbar and stats bar, but grows when the
+          text needs more room, so nothing is ever clipped. `short:` compacts the text on low windows. */}
+      <div className="relative min-h-[calc(100dvh-240px)] flex items-center overflow-hidden rounded border border-[#dddddd] shadow-sm max-w-7xl mx-auto">
         {/* Background image — instant swap */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -64,15 +66,15 @@ export default function HeroSlideshow() {
       </button>
 
       {/* Content */}
-      <div className="relative z-20 px-8 md:px-14 py-16">
-        <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-6">
+      <div className="relative z-20 px-8 md:px-14 py-8 short:py-6">
+        <p className="text-[#C8961A] text-xs font-semibold uppercase tracking-[0.3em] mb-6 short:mb-3">
           Miami, Florida · Est. 2013
         </p>
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-3xl mb-8">
+        <h1 className="text-4xl md:tall:text-6xl font-bold text-white leading-tight max-w-3xl mb-8 short:mb-4">
           Over 50 Years of Combined Real Estate{" "}
           <span className="text-[#C8961A]">Experience</span>
         </h1>
-        <p className="text-white/80 text-lg md:text-xl max-w-2xl leading-relaxed mb-12">
+        <p className="text-white/80 text-lg short:text-base md:tall:text-xl max-w-2xl leading-relaxed mb-12 short:mb-6">
           A private, well-capitalized real estate investment group with expertise in
           acquisition, development, adaptive reuse, leasing, and management across
           every major property type.
@@ -80,13 +82,13 @@ export default function HeroSlideshow() {
         <div className="flex flex-wrap gap-4">
           <Link
             href="/portfolio"
-            className="px-8 py-4 bg-white text-[#1A3770] font-bold text-sm uppercase tracking-widest rounded hover:bg-[#f0f0f0] transition-colors"
+            className="px-8 py-4 short:py-3 bg-white text-[#1A3770] font-bold text-sm uppercase tracking-widest rounded hover:bg-[#f0f0f0] transition-colors"
           >
             View Portfolio
           </Link>
           <Link
             href="/contact#contact-form"
-            className="px-8 py-4 border-2 border-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#C8961A] transition-colors"
+            className="px-8 py-4 short:py-3 border-2 border-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#C8961A] transition-colors"
           >
             Contact Us
           </Link>
