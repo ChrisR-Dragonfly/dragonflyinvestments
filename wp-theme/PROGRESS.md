@@ -17,7 +17,7 @@ up first.
 | Piece | State |
 |---|---|
 | New WordPress theme | **Running in real WordPress locally. Layout parity with Next.js complete on desktop AND phone, all 7 pages.** Not yet on the live server |
-| Old-site backup | Files + content done and verified. DB dump: **fix built and tested, waiting on Chris** (10 min in wp-admin) |
+| Old-site backup | **COMPLETE and verified 2026-09-18.** Files + database + XML export, bundled as `Documents/dragonflyri-wordpress-backup-2026-09-18.zip` (705 MB) with a restore README. Chris uploads it to Drive |
 | Live-site email typo | Fixed and verified 2026-09-10 |
 | LocalWP site | **Up**: `http://dragonfly-local.local`, PHP 8.0.30, Apache 2.4.43, MariaDB 10.4.32, WordPress 7.1.1. Matches production |
 
@@ -39,12 +39,13 @@ Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Ver
 
 ## Next steps, in order
 
-### 1. Chris: finish the database backup (about 10 minutes)
+### 1. Chris: two small leftovers from the backup
 
-Steps are in the backup folder: `DATABASE-BACKUP-STEPS.md`, with `dragonfly-backup-helper.zip` beside it.
-Upload the helper plugin, run a database-only backup, download the `-db.gz`, delete the helper.
-Then Claude verifies the dump (26 pages, options, users, revslider tables) and bundles the final zip.
-The helper's source is in `wp-theme/tools/dragonfly-backup-helper/`.
+- On the live site: Plugins > delete the deactivated **Dragonfly Backup Helper** (Claude does not
+  permanently delete things, so this click is Chris's). Optional: in UpdraftPlus, delete the duplicate
+  Sep 09 21:59 backup set from the server.
+- Upload `Documents/dragonflyri-wordpress-backup-2026-09-18.zip` to Drive. Privacy: its `older-backups/`
+  folder holds the 2023 database with 110 investor email addresses, so choose the Drive folder with care.
 
 ### 2. Chris: answer the email-address question (see below)
 
@@ -68,6 +69,14 @@ It must end with `43 passed, 0 failed`. Lessons from the local rehearsal that ap
   `privacy-policy` slug, so the new page silently became `privacy-policy-2` and its template would
   never have loaded. On the live site, REUSE the existing pages: `contact` 275, `portfolio` 1943,
   `privacy-policy` 5033. After creating or retitling any page, check the slug field.
+- **The active theme is Brooklyn Child** (`brooklyn-child`, parent `brooklyn`), confirmed in Site Health on
+  2026-09-18. Every earlier note that says "reactivate brooklyn" is wrong: a rollback reactivates
+  **Brooklyn Child**, then Settings > Reading > Homepage = Front Page (id 35), then the plugins.
+- The host's upload limit is 2 GB, so the 5.5 MB theme zip uploads fine. The Media Library image fallback
+  will not be needed.
+- The live site has exactly one user, the administrator Chris logs in as. Claude can drive Chris's
+  logged-in Chrome for the go-live clicks (it worked for the backup), but never types passwords and never
+  permanently deletes anything.
 - Before go-live, find the custom login URL set by WPS Hide Login, or a rollback could lock everyone out.
 - Watch Wordfence and Really Simple Security for blocking `/wp-json/dragonfly/v1/contact`. The verify
   script's last two checks catch exactly that.
@@ -128,6 +137,26 @@ locally with the same UpdraftPlus version: the baseline dump contained both stan
 helper the log showed both skipped, no errors, core tables present. Local site cleaned up afterwards.
 Gotcha: UpdraftPlus's `-db.gz` is many gzip blocks stitched together, one per table. PHP `gzdecode`
 reads only the first (a 1 KB header). Use `gzopen`/`gzread`, `gzip -dc`, or Python's `gzip`.
+
+**The backup is complete (later the same day).** At Chris's request Claude drove his logged-in Chrome on the
+live site: uploaded and activated the helper, ran a database-only backup with remote storage unticked,
+and read the UpdraftPlus log, which showed `Skipping table (filtered)` for exactly `mpi_wfKnownFileList` and
+`mpi_wfPendingIssues`, no errors, 79 tables, finished in under 10 seconds (it had looped forever before).
+Then deactivated the helper and checked the public site from outside (all 200). The download's SHA-256
+matches the server log byte for byte. `tools/verify-db-dump.py` passes every check: 17.5 MB of SQL, all
+core tables, 14 Slider Revolution tables, 26 pages, 27 portfolio entries, theme options, and the corrected
+email as proof of freshness. `others.zip` was also downloaded and verified. Everything is bundled in
+`Documents/dragonflyri-wordpress-backup-2026-09-18.zip` (705 MB, integrity tested) with `README.txt`.
+
+Rules that held during the browser session, worth repeating: Claude clicked "Download to your computer"
+by exact text because a "Delete from your web server" button sits right beside it; asked before each
+download with filename and size; and left both permanent deletions (the helper plugin, old server-side
+backups) to Chris.
+
+Facts learned on the live server: active theme is **Brooklyn Child**; exactly **1 user** exists (the 110
+investor accounts from 2023 are gone from the live site); 13.8 GB free disk; 2 GB upload limit;
+`advanced-cache.php` is an empty leftover so no page cache is active; the Aug 2024 database listed in
+UpdraftPlus's history no longer exists on the server.
 
 ## What happened in session 3 (2026-09-17)
 
