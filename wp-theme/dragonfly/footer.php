@@ -24,7 +24,7 @@
 			<p class="text-white text-sm font-semibold uppercase tracking-widest mb-4">Contact</p>
 			<address class="not-italic text-sm space-y-2 leading-relaxed">
 				<p>Miami, Florida</p>
-				<p><a href="mailto:info@dragonflyinvestment.com" class="hover:text-[#C8961A] transition-colors">info@dragonflyinvestment.com</a></p>
+				<p><a href="mailto:info@dragonflyri.com" class="hover:text-[#C8961A] transition-colors">info@dragonflyri.com</a></p>
 			</address>
 		</div>
 	</div>

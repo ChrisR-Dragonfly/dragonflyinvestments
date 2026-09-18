@@ -50,7 +50,8 @@ binary; LocalWP bundles one at `%APPDATA%\Local\lightning-services\php-*\bin\win
 
 - `bash tests/verify-site.sh <base-url>` checks a RUNNING WordPress site from the outside with curl: pages,
   content sanity, assets, all 17 redirects, 404, and the contact endpoint. Read-only, it never submits the
-  form. 43 checks. Run it against the live site right after go-live.
+  form. 45 checks, including that no dead `@dragonflyinvestment.com` address is on the site. Run it against the
+  live site right after go-live.
 
 This is a fast first pass, not a replacement for running the theme in real WordPress. The stubs are simplified
 (for example `sanitize_email()` is a pass-through), so a green run proves the theme's own logic, not WordPress's.

@@ -143,7 +143,7 @@ $dfi_label  = 'block text-xs font-semibold uppercase tracking-wider text-[#1A377
 
 	<p class="text-sm text-red-600" data-dfi-form-error hidden>
 		Something went wrong sending your message. Please try again or email us
-		directly at <a href="mailto:info@dragonflyinvestment.com" class="underline">info@dragonflyinvestment.com</a>.
+		directly at <a href="mailto:info@dragonflyri.com" class="underline">info@dragonflyri.com</a>.
 	</p>
 
 	<button type="submit" data-dfi-submit class="px-10 py-4 bg-[#C8961A] text-white font-bold text-sm uppercase tracking-widest rounded hover:bg-[#B8840F] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"><?php echo esc_html( $dfi_tabs[0]['submitLabel'] ); ?></button>

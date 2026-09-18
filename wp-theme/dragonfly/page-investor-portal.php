@@ -24,7 +24,7 @@ get_header();
 						The investor portal is currently under development. Please
 						contact us directly for investor access.
 					</p>
-					<a href="mailto:investors@dragonflyinvestment.com" class="inline-block text-sm font-semibold text-[#1A3770] border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8961A] transition-colors">investors@dragonflyinvestment.com</a>
+					<a href="mailto:info@dragonflyri.com" class="inline-block text-sm font-semibold text-[#1A3770] border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8961A] transition-colors">info@dragonflyri.com</a>
 					<div class="mt-6">
 						<button type="button" data-dfi-portal-back class="text-xs text-[#333333]/40 hover:text-[#333333] transition-colors">&larr; Back to sign in</button>
 					</div>

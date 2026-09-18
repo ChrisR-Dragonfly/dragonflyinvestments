@@ -642,8 +642,8 @@ export default function ContactPage() {
                     <p className="text-sm text-red-600">
                       Something went wrong sending your message. Please try again or email us
                       directly at{" "}
-                      <a href="mailto:info@dragonflyinvestment.com" className="underline">
-                        info@dragonflyinvestment.com
+                      <a href="mailto:info@dragonflyri.com" className="underline">
+                        info@dragonflyri.com
                       </a>
                       .
                     </p>
@@ -677,10 +677,10 @@ export default function ContactPage() {
                 <div className="flex gap-3">
                   <Mail size={18} className="text-[#C8961A] shrink-0 mt-0.5" />
                   <a
-                    href="mailto:info@dragonflyinvestment.com"
+                    href="mailto:info@dragonflyri.com"
                     className="text-sm text-[#333333] hover:text-[#C8961A] transition-colors"
                   >
-                    info@dragonflyinvestment.com
+                    info@dragonflyri.com
                   </a>
                 </div>
               </div>
@@ -695,10 +695,10 @@ export default function ContactPage() {
                 contact our investor relations team directly.
               </p>
               <a
-                href="mailto:investors@dragonflyinvestment.com"
+                href="mailto:info@dragonflyri.com"
                 className="text-sm text-[#1A3770] font-semibold hover:text-[#C8961A] transition-colors"
               >
-                investors@dragonflyinvestment.com
+                info@dragonflyri.com
               </a>
             </div>
 

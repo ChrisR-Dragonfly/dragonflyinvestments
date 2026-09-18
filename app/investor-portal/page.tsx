@@ -43,10 +43,10 @@ export default function InvestorPortalPage() {
                   contact us directly for investor access.
                 </p>
                 <a
-                  href="mailto:investors@dragonflyinvestment.com"
+                  href="mailto:info@dragonflyri.com"
                   className="inline-block text-sm font-semibold text-[#1A3770] border-b-2 border-[#C8961A] pb-0.5 hover:text-[#C8961A] transition-colors"
                 >
-                  investors@dragonflyinvestment.com
+                  info@dragonflyri.com
                 </a>
                 <div className="mt-6">
                   <button

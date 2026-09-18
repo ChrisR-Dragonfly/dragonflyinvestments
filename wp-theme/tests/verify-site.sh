@@ -31,6 +31,10 @@ contact=$(curl -s -A "$UA" --max-time 40 "$BASE/contact/")
 echo "$contact" | grep -q 'id="contact-form"' && ok "contact anchor #contact-form" || bad "contact anchor missing"
 echo "$contact" | grep -q '"restUrl"' && ok "contact page hands out REST url + nonce" || bad "contact page missing DFI config"
 echo "$home" | grep -q 'draognflyri' && bad "the old email typo is present" || ok "no 'draognflyri' typo"
+portal=$(curl -s -A "$UA" --max-time 40 "$BASE/investor-portal/")
+# dragonflyinvestment.com has no mail records (checked 2026-09-18), so any address on it bounces.
+echo "$home$contact$portal" | grep -q 'dragonflyinvestment\.com' && bad "a dead @dragonflyinvestment.com address is on the site" || ok "no dead @dragonflyinvestment.com addresses (home, contact, investor portal)"
+echo "$home" | grep -q 'mailto:info@dragonflyri.com' && ok "footer contact is info@dragonflyri.com" || bad "footer contact address is not info@dragonflyri.com"
 
 echo "== assets =="
 for a in /wp-content/themes/dragonfly/assets/css/main.css /wp-content/themes/dragonfly/assets/js/nav.js /wp-content/themes/dragonfly/assets/img/Dragonfly_Def.png /wp-content/themes/dragonfly/assets/img/gem-of-hallandale.jpg /wp-content/themes/dragonfly/assets/img/OtterCreek_Picture2.jpg; do

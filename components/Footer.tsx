@@ -56,10 +56,10 @@ export default function Footer() {
             <p>Miami, Florida</p>
             <p>
               <a
-                href="mailto:info@dragonflyinvestment.com"
+                href="mailto:info@dragonflyri.com"
                 className="hover:text-[#C8961A] transition-colors"
               >
-                info@dragonflyinvestment.com
+                info@dragonflyri.com
               </a>
             </p>
           </address>

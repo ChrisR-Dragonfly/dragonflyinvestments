@@ -97,7 +97,7 @@ $dfi_steps = array(
 					</div>
 					<div class="flex gap-3">
 						<?php dfi_icon( 'mail', 18, 'text-[#C8961A] shrink-0 mt-0.5' ); ?>
-						<a href="mailto:info@dragonflyinvestment.com" class="text-sm text-[#333333] hover:text-[#C8961A] transition-colors">info@dragonflyinvestment.com</a>
+						<a href="mailto:info@dragonflyri.com" class="text-sm text-[#333333] hover:text-[#C8961A] transition-colors">info@dragonflyri.com</a>
 					</div>
 				</div>
 			</div>
@@ -108,7 +108,7 @@ $dfi_steps = array(
 					For investor access or inquiries about our investor portal, please
 					contact our investor relations team directly.
 				</p>
-				<a href="mailto:investors@dragonflyinvestment.com" class="text-sm text-[#1A3770] font-semibold hover:text-[#C8961A] transition-colors">investors@dragonflyinvestment.com</a>
+				<a href="mailto:info@dragonflyri.com" class="text-sm text-[#1A3770] font-semibold hover:text-[#C8961A] transition-colors">info@dragonflyri.com</a>
 			</div>
 
 			<div class="bg-[#f7f8fa] border border-[#dddddd] rounded p-5">

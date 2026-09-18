@@ -47,7 +47,9 @@ Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Ver
 - Upload `Documents/dragonflyri-wordpress-backup-2026-09-18.zip` to Drive. Privacy: its `older-backups/`
   folder holds the 2023 database with 110 investor email addresses, so choose the Drive folder with care.
 
-### 2. Chris: answer the email-address question (see below)
+### 2. Chris: send one test email to `info@dragonflyri.com` from a personal (non-company) address
+
+See "Email addresses" below for why. Thirty seconds, and it is the last unknown about the public contact address.
 
 ### 3. One real email through Resend (needs Chris, because Claude never enters API keys)
 
@@ -63,7 +65,7 @@ the acceptance test, which is read-only and never submits the form:
 bash wp-theme/tests/verify-site.sh https://www.dragonflyri.com
 ```
 
-It must end with `43 passed, 0 failed`. Lessons from the local rehearsal that apply directly:
+It must end with `45 passed, 0 failed`. Lessons from the local rehearsal that apply directly:
 
 - **Slug collisions are real.** Locally, WordPress's built-in draft "Privacy Policy" page held the
   `privacy-policy` slug, so the new page silently became `privacy-policy-2` and its template would
@@ -81,15 +83,35 @@ It must end with `43 passed, 0 failed`. Lessons from the local rehearsal that ap
 - Watch Wordfence and Really Simple Security for blocking `/wp-json/dragonfly/v1/contact`. The verify
   script's last two checks catch exactly that.
 
-## Open question that must be answered before go-live
+## Email addresses: DECIDED 2026-09-18, Option B (one address)
 
-**Which email addresses should the new site use?** The theme currently hardcodes
-`info@dragonflyinvestment.com` and `investors@dragonflyinvestment.com` — note the domain is
-`dragonflyinvestment.com`, **not** `dragonflyri.com`. These came straight from the Next.js source.
-The live old site uses `info@dragonflyri.com`. Given we just fixed an address that had been bouncing
-for three and a half years, confirm these two are real before shipping them. Files to edit if they
-change: `footer.php`, `page-contact.php`, `page-investor-portal.php`, `page-legal.php`,
-`page-privacy-policy.php`.
+**Facts gathered 2026-09-18 (DNS lookups plus two test emails sent from chris@dragonflyri.com):**
+
+| Address / domain | Finding |
+|---|---|
+| `dragonflyinvestment.com` | Domain exists (GoDaddy nameservers, parked IP) but has **no MX records**. Mail to it cannot be delivered. The theme and the Next.js site use it in 6 places, so those addresses are dead |
+| `dragonflyri.com` | MX points to Google Workspace. Works |
+| `info@dragonflyri.com` | Test accepted, **no bounce**. It exists (user, alias, or group). Not yet known: who receives it, and whether it accepts mail from OUTSIDE the company. If it is a Google Group limited to the organization, real website visitors would bounce. Needs one test from a non-dragonflyri.com address |
+| `investors@dragonflyri.com` | **Bounced in 3 seconds.** Google Groups notice: "the group you tried to contact (Investors) may not exist, or you may not have permission to post". So it either does not exist or is a posting-restricted group. Inference, not verified: the capitalised "Investors" may be a real group's name, possibly a broadcast list TO investors. If so it must never be shown publicly. A Workspace admin should check before anyone uses it |
+
+**Decision (Chris): use `info@dragonflyri.com` everywhere for now.** Done the same day in both codebases so
+they stay in sync: `footer.php`, `page-contact.php`, `page-investor-portal.php`, `parts/contact-form.php`, and
+`components/Footer.tsx`, `app/contact/page.tsx`, `app/investor-portal/page.tsx`. Both `info@` and `investors@`
+on the dead domain became `info@dragonflyri.com`; no copy or layout was changed, so the contact page's
+"Investor Relations" block now shows the same address as "Our Office". `tests/verify-site.sh` fails if a
+`dragonflyinvestment.com` address ever reappears.
+
+Still open, and both need a human:
+- **Send one email to `info@dragonflyri.com` from a NON-company address** (a personal Gmail). The test so far
+  came from inside the company. If `info@` is a Google Group limited to the organization, real visitors would
+  bounce. Also watch for a "got it" reply to the test, which shows who reads that inbox.
+- If a separate investor-relations address is wanted later, a Google Workspace admin must first check what
+  `investors@dragonflyri.com` is (see the table above) and create a proper address. Swapping it in is small.
+- These fixes are on the `wordpress-theme` branch only. The live Vercel site (`master`) still shows the dead
+  addresses until this branch is merged or the three Next.js files are brought over.
+
+Background: the theme and the Next.js site originally hardcoded `info@` and `investors@` on
+`dragonflyinvestment.com`, a domain that turned out to have no mail service at all.
 
 ## What happened in session 4 (2026-09-18)
 
