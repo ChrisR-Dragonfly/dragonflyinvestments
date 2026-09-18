@@ -48,6 +48,10 @@ binary; LocalWP bundles one at `%APPDATA%\Local\lightning-services\php-*\bin\win
 - `php tests/dump.php <page-key> <template>` prints one rendered page. Dump all seven into `preview/`, copy
   `dragonfly/assets` alongside, and serve the folder to eyeball the theme or diff it against the Next.js site.
 
+- `bash tests/verify-site.sh <base-url>` checks a RUNNING WordPress site from the outside with curl: pages,
+  content sanity, assets, all 17 redirects, 404, and the contact endpoint. Read-only, it never submits the
+  form. 43 checks. Run it against the live site right after go-live.
+
 This is a fast first pass, not a replacement for running the theme in real WordPress. The stubs are simplified
 (for example `sanitize_email()` is a pass-through), so a green run proves the theme's own logic, not WordPress's.
 

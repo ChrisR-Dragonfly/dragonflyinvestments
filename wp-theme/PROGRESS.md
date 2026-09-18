@@ -1,6 +1,6 @@
 # Dragonfly WordPress rebuild — progress and next steps
 
-Last updated: 2026-09-17 (end of session 3). Read this first when picking the work back up.
+Last updated: 2026-09-18 (session 4). Read this first when picking the work back up.
 Full plan: `C:\Users\chris\.claude\plans\humble-splashing-newell.md`
 Backup detail: `C:\Users\chris\Documents\dragonflyri-wordpress-backup-2026-09\STATUS.md`
 
@@ -16,8 +16,8 @@ up first.
 
 | Piece | State |
 |---|---|
-| New WordPress theme | **Running in real WordPress locally and verified** (session 3). Not yet on the live server |
-| Old-site backup | Files + content done and verified. Full DB dump still blocked |
+| New WordPress theme | **Running in real WordPress locally. Layout parity with Next.js complete on desktop AND phone, all 7 pages.** Not yet on the live server |
+| Old-site backup | Files + content done and verified. DB dump: **fix built and tested, waiting on Chris** (10 min in wp-admin) |
 | Live-site email typo | Fixed and verified 2026-09-10 |
 | LocalWP site | **Up**: `http://dragonfly-local.local`, PHP 8.0.30, Apache 2.4.43, MariaDB 10.4.32, WordPress 7.1.1. Matches production |
 
@@ -39,38 +39,38 @@ Branch: `wordpress-theme`, pushed to GitHub. `master` untouched, so the live Ver
 
 ## Next steps, in order
 
-### 1. Two small parity leftovers (cosmetic, not blockers)
+### 1. Chris: finish the database backup (about 10 minutes)
 
-- **Contact page form section is 857px vs 861px on Next.js (4px).** Already proven NOT to be fonts or
-  content: the same paragraph measures identically on both (Aptos, 12px, 19.5px line height, 3 lines,
-  58.5px). Tab bar is 45px vs 46px. Measurements were taken at device pixel ratio 1.75, so re-measure at
-  DPR 1 first, because sub-pixel snapping may be the whole story.
-- **Portfolio page has no Next.js number yet.** WordPress measures 6110px (sections 410 / 4868 / 409).
-  Next hides that page's content in an off-screen frame until it hydrates, so measure it by navigating
-  the tab straight to `localhost:3000/portfolio`, not through an iframe.
-- Then repeat the comparison at a phone width (390x844). Only desktop has been compared so far.
+Steps are in the backup folder: `DATABASE-BACKUP-STEPS.md`, with `dragonfly-backup-helper.zip` beside it.
+Upload the helper plugin, run a database-only backup, download the `-db.gz`, delete the helper.
+Then Claude verifies the dump (26 pages, options, users, revslider tables) and bundles the final zip.
+The helper's source is in `wp-theme/tools/dragonfly-backup-helper/`.
 
-### 2. Answer the email-address question (see below), then send one real email through Resend
+### 2. Chris: answer the email-address question (see below)
 
-Everything about the form is proven except an actual Resend delivery. Put a real sending-only key in
-Settings > Dragonfly locally, submit once, and confirm it reaches chris@dragonflyri.com.
-Also eyeball the Settings > Dragonfly page itself, which has not been looked at in a browser yet.
+### 3. One real email through Resend (needs Chris, because Claude never enters API keys)
 
-### 3. Finish the backup (can happen in parallel, needs Chris in wp-admin)
-
-Remaining: full database dump (see STATUS.md for the blocker and four options), `others.zip`, and
-Site Health > Info pasted into `site-health.txt`. Then bundle into one zip with a restore README.
+In the local site's wp-admin: Settings > Dragonfly, paste a sending-only Resend key, Save, click
+"Send test email", confirm it reaches chris@dragonflyri.com. Everything else about the form is proven.
 
 ### 4. Go-live
 
-Ordered checklist is in the plan file, "Phase 9". Lessons from the local rehearsal that apply directly:
+Ordered checklist is in the plan file, "Phase 9". After Chris activates the theme on the live site, run
+the acceptance test, which is read-only and never submits the form:
+
+```
+bash wp-theme/tests/verify-site.sh https://www.dragonflyri.com
+```
+
+It must end with `43 passed, 0 failed`. Lessons from the local rehearsal that apply directly:
 
 - **Slug collisions are real.** Locally, WordPress's built-in draft "Privacy Policy" page held the
   `privacy-policy` slug, so the new page silently became `privacy-policy-2` and its template would
   never have loaded. On the live site, REUSE the existing pages: `contact` 275, `portfolio` 1943,
   `privacy-policy` 5033. After creating or retitling any page, check the slug field.
 - Before go-live, find the custom login URL set by WPS Hide Login, or a rollback could lock everyone out.
-- Watch Wordfence and Really Simple Security for blocking `/wp-json/dragonfly/v1/contact`.
+- Watch Wordfence and Really Simple Security for blocking `/wp-json/dragonfly/v1/contact`. The verify
+  script's last two checks catch exactly that.
 
 ## Open question that must be answered before go-live
 
@@ -81,6 +81,53 @@ The live old site uses `info@dragonflyri.com`. Given we just fixed an address th
 for three and a half years, confirm these two are real before shipping them. Files to edit if they
 change: `footer.php`, `page-contact.php`, `page-investor-portal.php`, `page-legal.php`,
 `page-privacy-policy.php`.
+
+## What happened in session 4 (2026-09-18)
+
+**Layout parity is finished.** Every page measured on the theme and on the Next.js site under identical
+conditions:
+
+| Page | Desktop 1440 (doc px) | Phone 390 (doc px) | Match |
+|---|---|---|---|
+| Home | 2628 | 4894 | exact |
+| About | 3417 | 7044 | exact |
+| Portfolio | 6085 | 16308 | exact |
+| Contact | 2447 | 4554 | exact |
+| Legal | 2905 | 4226 | exact |
+| Privacy Policy | 2417 | 3651 | exact |
+| Investor Portal | 1143 | 1562 | exact |
+
+Every section height matches too, and no page scrolls sideways on a phone. The hamburger menu is visible
+at phone width, opens with 5 items, closes on second tap, and fits the screen.
+
+Two measurement traps worth remembering:
+
+- **The session 3 "4px contact page difference" was not real.** The browser pane was scaled to a device
+  pixel ratio of 1.75, which snaps sub-pixels differently on each load. At DPR 1 the contact column is
+  732.75px on both sites with every child identical. Always record `devicePixelRatio` and compare only
+  measurements taken under the same value.
+- **Next.js's portfolio page reads as empty (doc 900, no sections) in an unpainted tab.** It reveals its
+  Suspense content on an animation frame, and the pane fires none until something forces a paint.
+  Take a screenshot first, then measure.
+
+**New: `tests/verify-site.sh <base-url>`**, a curl-only, read-only acceptance test with 43 checks: 7 pages
+(200, theme CSS linked, no PHP errors), content sanity (hero headline, 8 slides, 36 properties, anchors,
+inlined map, REST config, the old email typo absent), 5 assets, all 17 redirects, 3 must-not-redirect
+pages, a 404, REST route registered, and a nonce-less POST rejected with the theme's own 403. Passes 43
+of 43 against the local site. This is the go-live gate.
+
+**Settings > Dragonfly verified inside real WordPress** through WP-CLI as an administrator (no wp-admin
+login used): the page renders with all three fields and both action forms; saving
+`Dragonfly <noreply@dragonflyri.com>` stores it intact through WordPress's own option sanitizing (the
+session 3 bug, confirmed fixed end to end); garbage falls back to the default; the test-email path sends.
+
+**Database backup unblocked.** Reading UpdraftPlus 1.26.7's source from the plugins backup showed the
+table picker UI is paid, but the free engine consults the `updraftplus_backup_table` filter before it
+touches each table. A 10-line helper plugin returns false for the two corrupt Wordfence tables. Tested
+locally with the same UpdraftPlus version: the baseline dump contained both stand-in tables; with the
+helper the log showed both skipped, no errors, core tables present. Local site cleaned up afterwards.
+Gotcha: UpdraftPlus's `-db.gz` is many gzip blocks stitched together, one per table. PHP `gzdecode`
+reads only the first (a 1 KB header). Use `gzopen`/`gzread`, `gzip -dc`, or Python's `gzip`.
 
 ## What happened in session 3 (2026-09-17)
 
